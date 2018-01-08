@@ -1,0 +1,49 @@
+<template>
+  <header id="header" class="header">
+    <top-header :company="company" :users="users"></top-header>
+    <menus></menus>
+  </header>
+</template>
+<script>
+import TopHeader from 'components/header/TopHeader.vue'
+import Menus from 'components/menu/Menu.vue'
+import { mapGetters } from 'vuex'
+
+export default {
+  data () {
+    return {
+      topHeader: false,
+      company: {},
+      users: {},
+      views: {},
+      menus: {}
+    }
+  },
+  computed: {
+    ...mapGetters({
+      userStatus: 'getUserStatus'
+    })
+  },
+  created() {
+    const data = this.userStatus.data
+    console.log(data)
+    this.company = data.company
+    this.users = data.user
+    this.views = data.view
+    this.menus = data.menu
+  },
+  components: {
+    TopHeader,
+    Menus
+  }
+}
+</script>
+<style lang="stylus">
+  .header
+    background-color: #1e232f;
+    padding: 12px 20px 0;
+
+  .header ul
+    margin: 0;
+    padding: 0;
+</style>

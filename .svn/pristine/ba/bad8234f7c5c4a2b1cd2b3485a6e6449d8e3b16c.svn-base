@@ -1,0 +1,71 @@
+<template>
+  <div>
+    <img src="./assets/images/logo.jpg" width="400">
+    <ul>
+      <li>
+        <router-link to="/" exact>Home</router-link>
+      </li>
+      <li>
+        <router-link to="/user" exact>User</router-link>
+      </li>
+      <li>
+        <router-link to="/about">About</router-link>
+      </li>
+      <li>
+        <router-link to="/citys">Citys</router-link>
+      </li>
+      <li>
+        <router-link to="/counter">Counter</router-link>
+      </li>
+    </ul>
+    <router-view class="view"></router-view>
+  </div>
+</template>
+<script lang="babel">
+// import { mapGetters } from 'vuex'
+export default {
+  data () {
+    return { title: '' }
+  },
+  mounted () { },
+  watch: {
+    '$route' (to, from) {
+      switch (to.path) {
+        case '/':
+          document.title = '首页'
+          break
+        case '/user':
+          document.title = '用户'
+          break
+        case '/citys':
+          document.title = '地区'
+          break
+        case '/about':
+          document.title = '我的'
+          break
+        case '/login':
+          document.title = '登录'
+          break
+        default:
+          document.title = 'vue-ssr'
+      }
+    }
+  }
+}
+
+</script>
+<style>
+.router-link-active {
+  color: red;
+}
+
+.view {
+  padding: 0 30px
+}
+
+ul li {
+  display: inline-block;
+  margin: 10px;
+}
+
+</style>

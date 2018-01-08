@@ -1,0 +1,63 @@
+<template>
+  <div class="">
+    <div class="row">
+      <div class="col-xs-12">
+        <div class="col-xs-3">
+          <panel></panel>
+        </div>
+        <div class="member-form col-xs-9">
+          <form class="form-horizontal">
+            <div class="form-group">
+              <label class="col-xs-3 control-label">组内用户 <input type="checkbox" :checked="false"></label>
+              <div class="col-xs-9">
+                <label class="control-label">
+                  <input type="checkbox" :checked="false"> 权限
+                </label>
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="col-xs-3 control-label">组外用户 <input type="checkbox" :checked="false"></label>
+              <div class="col-xs-9">
+                <label class="control-label">
+                  <input type="checkbox" :checked="false"> 权限
+                </label>
+              </div>
+            </div>
+            <div align="center">
+              <btn type="primary">保存</btn>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</template>
+
+<script>
+import { mapGetters } from 'vuex'
+import panel from '../components/panel.vue'
+
+export default {
+  name: 'User',
+  data () {
+    return { }
+  },
+  computed: {
+    ...mapGetters({
+      user: 'getUser'
+    })
+  },
+  components: {
+    panel
+  },
+  asyncData ({ store }) {
+    // return store.dispatch('getUser', { loginName: 'jiel', passwd: '123456' })
+  }
+}
+</script>
+<style lang="less">
+.member-form {
+  border: 1px solid #dddddd;
+  padding: 15px 0;
+}
+</style>

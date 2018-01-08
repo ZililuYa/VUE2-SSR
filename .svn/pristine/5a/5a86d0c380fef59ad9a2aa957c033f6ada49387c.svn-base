@@ -1,0 +1,71 @@
+<template>
+  <div class="login-container" @keyup.13="submitForm()">
+    <div class="login-container-bg"></div>
+    <div class="panel panel-default form-signin form-accept">
+      <div class="panel-heading">登录并接受 superman。 邀请，加入项目 Teambition 新手引导</div>
+      <div class="panel-body accept-body">
+        <btn type="primary" @click="submits">{{submit.text}}</btn>
+      </div>
+    </div>
+  </div>
+</template>
+<script>
+// import api from 'src/api'
+export default {
+  name: 'AcceptInvite',
+  data() {
+    return {
+      submit: {
+        loading: false,
+        text: '加 入'
+      }
+      // ruleForm: {
+      //   username: '13691425060',
+      //   password: '123456'
+      // }
+    }
+  },
+  created() {
+    // 客户端 服务端同时请求axios
+  },
+  mounted() {
+    // 客户端请求axios
+  },
+  asyncData({ store }) {
+    // return store.dispatch(`doLogins`)
+  },
+  methods: {
+    submits() {
+      /**
+       * 登录
+       */
+      // const param = this.ruleForm
+      // api.post('/login', param).then((response) => {
+      //   if (response.code === 200) {
+      //   } else {
+      //     this.submit.text = '登 录'
+      //     this.notify('danger', response.message)
+      //   }
+      // }).catch((error) => {
+      //   console.log(error)
+      // })
+    }
+  }
+}
+
+</script>
+<style lang="less">
+.form-accept {
+  .panel-heading {
+    box-sizing: content-box;
+    height: auto;
+    line-height: 30px;
+    padding: 15px 15px 0;
+    font-weight: 800;
+  }
+  .accept-body {
+    padding:50px 0;
+    text-align: center;
+  }
+}
+</style>

@@ -1,0 +1,122 @@
+<template>
+  <div class="">
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <span class="glyphicon glyphicon-list-alt"></span><span class="panel-heading-txt">{{title}}</span>
+      </div>
+      <div class="panel-body">
+        <div class="panel-item">
+          <a href="javascript:void(0);">技术部</a>
+          <a class="panel-btn" href="javascript:void(0);" v-if="department" @click="doEdit(this)" title="编辑部门">编辑</a>
+          <a class="panel-btn" href="javascript:void(0);" v-if="department" @click="doDelete()" title="删除部门">删除</a>
+        </div>
+        <div class="panel-item">
+          <a href="javascript:void(0);">人事部</a>
+        </div>
+        <div class="panel-item">
+          <a href="javascript:void(0);">财务部</a>
+        </div>
+        <div class="panel-item pull-right" v-if="user">
+          <a href="/organization/department">维护部门结构</a>
+        </div>
+      </div>
+    </div>
+    <modal v-model="editModal" title="编辑部门" @hide="" ref="modal" id="add_modal">
+      <form class="form-horizontal">
+        <div class="form-group">
+          <label for="name" class="col-sm-2 control-label"><span class="text-danger">* </span>上级部门</label>
+          <div class="col-sm-10">
+            <select class="form-control">
+              <option>/</option>
+              <option>2</option>
+              <option>3</option>
+              <option>4</option>
+              <option>5</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="name" class="col-sm-2 control-label">部门名称</label>
+          <div class="col-sm-10">
+            <input type="text" class="form-control">
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="name" class="col-sm-2 control-label">负责人</label>
+          <div class="col-sm-10">
+            <select class="form-control">
+              <option>/</option>
+              <option>2</option>
+              <option>3</option>
+              <option>4</option>
+              <option>5</option>
+            </select>
+          </div>
+        </div>
+      </form>
+      <div slot="footer">
+        <btn type="primary">保存</btn>
+        <btn @click="editModal=false">取消</btn>
+      </div>
+    </modal>
+  </div>
+</template>
+<script>
+  export default {
+    data () {
+      return {
+        editModal: false
+      }
+    },
+    props: {
+      user: {
+        type: Boolean
+      },
+      department: {
+        type: Boolean
+      },
+      title: {
+        type: String
+      }
+    },
+    methods: {
+      doEdit () {
+        /**
+          * 部门编辑
+         **/
+        let vm = this
+        vm.editModal = true
+      },
+      doDelete () {
+        /**
+          * 部门删除
+         **/
+        this.$confirm({
+          title: '提示',
+          okText: '确定',
+          cancelText: '取消',
+          content: '确定要删除此部门吗？'
+        }).then(() => {
+        }).catch(() => {
+          // this.$notify('Delete canceled.')
+        })
+      }
+    }
+  }
+</script>
+<style lang="less">
+@gray-a: grey;
+.panel-heading-txt {
+  padding-left:5px;
+}
+.panel-item {
+  padding:5px 0;
+  a {
+    text-decoration: none;
+  }
+  .panel-btn {
+    color: @gray-a;
+    padding-left:10px;
+  }
+}
+</style>

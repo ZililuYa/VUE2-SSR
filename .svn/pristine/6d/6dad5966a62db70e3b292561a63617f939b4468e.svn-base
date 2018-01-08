@@ -1,0 +1,32 @@
+<template>
+  <div>
+    <p>About</p>
+    <pre>{{jsons}}</pre>
+  </div>
+</template>
+<script>
+import api from 'src/api'
+export default {
+  name: 'About',
+  data () {
+    return {
+      jsons: {}
+    }
+  },
+  created () {
+    this.postData()
+  },
+  methods: {
+    postData () {
+      api.post('/login', { loginName: 'jiel', passwd: '123456' }).then((response) => {
+        this.users = response.data
+        this.jsons = JSON.stringify(response.data, null, 2)
+      }).catch((error) => {
+        console.log(error)
+      })
+    }
+  }
+}
+
+</script>
+

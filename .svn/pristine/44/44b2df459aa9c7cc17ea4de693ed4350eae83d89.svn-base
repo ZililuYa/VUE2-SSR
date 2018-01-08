@@ -1,0 +1,31 @@
+// import api from 'src/api'
+
+const state = {}
+
+const getters = {
+  projectState: state => state
+}
+
+const mutations = {
+  // USER_DATA: (state, users) => {
+  //   state.users = users
+  // }
+}
+
+const actions = {
+  isProjectState ({state, commit}, param) {
+    state.title = '项目'
+    // return api.post('/login', param).then((response) => {
+    //   commit('USER_DATA', response.data)
+    // }).catch((error) => {
+    //   console.log(error)
+    // })
+  }
+}
+
+export default {
+  state,
+  getters,
+  mutations,
+  actions
+}

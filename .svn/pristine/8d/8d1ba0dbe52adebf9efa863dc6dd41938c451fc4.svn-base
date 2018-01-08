@@ -1,0 +1,88 @@
+<template>
+  <form class="form-inline form-task" ref="form">
+    <slot></slot>
+  </form>
+</template>
+<script>
+  /**
+   * 全局form验证
+   * */
+  export default {
+    data () {
+      return {
+        listData: [],
+        success: 'form-control',
+        error: 'form-control form-control-error'
+      }
+    },
+    components: {},
+    mounted () {
+      let all = this.$refs.form.getElementsByTagName('*')
+      for (let i of all) {
+        if (i.getAttribute('validate')) {
+          this.listData.push(i)
+        }
+      }
+//      console.log(this.listData)
+      for (let i of this.listData) {
+        let validate = i.getAttribute('validate').split('|')
+        i.oninput = () => {
+        }
+        i.onblur = () => {
+          for (let v of validate) {
+            if (!this[v](i.value, i)) return false
+          }
+          return true
+        }
+      }
+    },
+    props: {},
+    methods: {
+      validate () {
+        for (let i of this.listData) {
+          let validate = i.getAttribute('validate').split('|')
+          for (let v of validate) {
+            if (!this[v](i.value, i)) return false
+          }
+        }
+        return true
+      },
+      /**
+       * 以下可自定义验证规格
+       * */
+      required (value, i) {
+        if (value) {
+          i.className = this.success
+          return true
+        }
+        i.className = this.error
+        return false
+      },
+      number (value, i) {
+        if (!isNaN(value)) {
+          i.className = this.success
+          return true
+        }
+        i.className = this.error
+        return false
+      },
+      email (value, i) {
+        let reg = /^([a-zA-Z0-9_-])+@([a-zA-Z0-9_-])+(.[a-zA-Z0-9_-])+/
+        if (reg.test(value)) {
+          i.className = this.success
+          return true
+        }
+        i.className = this.error
+        return false
+      }
+    }
+  }
+</script>
+
+<style>
+  .form-control-error {
+    border-color: #a94442;
+    -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+    box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+  }
+</style>

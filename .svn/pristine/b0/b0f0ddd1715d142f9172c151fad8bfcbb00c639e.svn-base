@@ -1,0 +1,24 @@
+<template>
+  <div>
+    <div v-for="item in citys">
+      <p>{{item.name}}</p>
+    </div>
+  </div>
+</template>
+
+<script>
+import { mapGetters } from 'vuex'
+
+export default {
+  name: 'Citys',
+  computed: {
+    ...mapGetters({
+      citys: 'getCitys'
+    })
+  },
+
+  asyncData ({ store }) {
+    return store.dispatch(`getCitys`)
+  }
+}
+</script>

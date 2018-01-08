@@ -1,0 +1,48 @@
+<template>
+  <div class="view">
+    <div class="nav" style="height:20px;"></div>
+    <div class="wrap">
+      <div class="main">
+        <p>Home</p>
+        <p>
+          去
+          <router-link to="/login" exact>登录</router-link>
+        </p>
+        {{USER}}
+      </div>
+    </div>
+  </div>
+</template>
+
+<script>
+// import api from 'src/api'
+import { mapGetters } from 'vuex'
+
+export default {
+  name: 'Login',
+  data () {
+    return {
+    }
+  },
+  created () {
+    let vm = this
+    console.log('USER', vm.USER)
+  },
+  computed: {
+    ...mapGetters({
+      USER: 'getUser1'
+    })
+  },
+  // asyncData ({ store }) {
+  //   return store.dispatch('getUser', { loginName: 'jiel', passwd: '123456' })
+  // },
+  methods: {
+    init () {
+      let vm = this
+      if (!vm.USER) {
+        vm.$router.replace({ path: '/login' })
+      }
+    }
+  }
+}
+</script>

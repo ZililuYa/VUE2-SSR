@@ -1,0 +1,29 @@
+<template>
+  <header id="header" class="header">
+    <top-header></top-header>
+    <menus></menus>
+    <!--<menusub></menusub>-->
+  </header>
+</template>
+<script>
+  import TopHeader from 'components/header/TopHeader.vue'
+  // import Menusub from 'components/menu/Menusub.vue'
+  import Menus from 'components/menu/Menu.vue'
+
+  export default {
+    components: {
+      TopHeader,
+//    Menusub,
+      Menus
+    }
+  }
+</script>
+<style lang="stylus">
+  .header
+    background-color: #1e232f;
+    padding: 12px 20px 0;
+
+  .header ul
+    margin: 0;
+    padding: 0;
+</style>

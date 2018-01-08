@@ -1,0 +1,67 @@
+<template>
+  <div class="view">
+    <menuSub :menu="menu" :menuRight="menuRight"></menuSub>
+    <router-view class="wrap"></router-view>
+  </div>
+</template>
+<script>
+  import { mapGetters, mapActions } from 'vuex'
+  import menuSub from '../../components/menu/Menusub.vue'
+  export default {
+    name: 'organizationIndex',
+    title () {
+      return '组织'
+    },
+    data () {
+      return {
+        menuRight: [
+        ],
+        menu: [
+          {
+            text: '用户',
+            url: '/organization/index'
+          },
+          {
+            text: '部门',
+            url: '/organization/department'
+          },
+          {
+            text: '职位',
+            url: '/organization/position'
+          },
+          {
+            text: '权限',
+            url: '/organization/power'
+          },
+          {
+            text: '公司',
+            url: '/organization/company'
+          },
+          {
+            text: '动态',
+            url: '/organization/log'
+          }
+        ]
+      }
+    },
+    components: {menuSub},
+    computed: {
+      ...mapGetters({
+        getQrCode: 'getQrCode'   // 二维码
+      })
+    },
+    mounted() {
+      if (this.$route.path === '/organization') {
+        this.$router.push('/organization/index')
+      }
+    },
+    asyncData ({store, route}) {
+      return Promise.all([store.dispatch('isProjectTeam', {projectId: parseInt(route.params.id)}), store.dispatch('doMember'), store.dispatch('isDepartment', {})])
+    },
+    methods: {
+      ...mapActions([
+        'doQrCode'
+      ])
+    }
+  }
+</script>

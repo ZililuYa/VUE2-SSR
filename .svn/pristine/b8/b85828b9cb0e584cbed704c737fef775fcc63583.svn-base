@@ -1,0 +1,59 @@
+<template>
+  <table class="table table-bordered table-striped table-hover table-condensed">
+    <thead>
+    <tr>
+      <th>ID</th>
+      <th>项目名称</th>
+      <th>项目代号</th>
+      <th>项目负责人</th>
+      <th>结束日期</th>
+      <th>项目状态</th>
+      <th>总预计</th>
+      <th>总耗时</th>
+      <th>总剩余</th>
+      <th>进度</th>
+      <th>燃尽图</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr v-for="i in data">
+      <td>{{i.id}}</td>
+      <td><a href="">阿拉丁管控平台</a></td>
+      <td>华山</td>
+      <td>bigbang</td>
+      <td>2018-01-05</td>
+      <td>未开始</td>
+      <td>0</td>
+      <td>0</td>
+      <td>10</td>
+      <td>
+        <progress-bar style="margin-bottom: 0" v-model="num" striped active/>
+      </td>
+      <td></td>
+    </tr>
+    <tr>
+      <td colspan="99">
+        <pagination size="sm" v-model="currentPage" :total-page="totalPage" align="right"/>
+        <div class="fr totalPage">共{{totalPage}}条记录，每页10条</div>
+      </td>
+    </tr>
+    </tbody>
+  </table>
+</template>
+
+<script>
+  export default {
+    data () {
+      return {
+        num: 50,
+        currentPage: 1,
+        totalPage: 100
+      }
+    },
+    props: {
+      data: {
+        type: Array
+      }
+    }
+  }
+</script>

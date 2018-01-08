@@ -1,0 +1,166 @@
+<template>
+  <div class="">
+    <div class="featurebar">
+      <ul class="ul">
+        <li>
+          <span class="badge">{{data.id}}</span>
+          <b>{{data.name}}</b>
+          <!--<input class="form-control" v-model="item.name"/>-->
+        </li>
+        <li class="fr">
+          <router-link to="/project/index"><i class="fa fa-reply"></i></router-link>
+        </li>
+      </ul>
+    </div>
+    <div class="main">
+      <div class="row-table">
+        <div class="col-main">
+          <fieldset class="fieldset">
+            <legend>项目描述</legend>
+            <!--<div class="content" v-html="data.content"></div>-->
+            <editor v-model="item.content" class="content"></editor>
+          </fieldset>
+          <fieldset class="fieldset">
+            <legend>历史记录</legend>
+            <logData :data="data.logList"></logData>
+          </fieldset>
+          <div class="text-center tool-a">
+            <btn type="primary" size="sm" @click="submit">保存</btn>
+            <btn size="sm" @click="cancel">取消</btn>
+          </div>
+        </div>
+        <div class="col-side">
+          <fieldset class="fieldset">
+            <legend>基本信息</legend>
+            <div class="content">
+              <table class="table-content">
+                <tbody>
+                <tr>
+                  <th>项目名称</th>
+                  <td class="input-group-sm">
+                    <input type="text" class="form-control" v-model="item.name">
+                  </td>
+                </tr>
+                <tr>
+                  <th>项目代号</th>
+                  <td class="input-group-sm">
+                    <input type="text" class="form-control" v-model="item.code">
+                  </td>
+                </tr>
+                <tr>
+                  <th>起止时间</th>
+                  <td>2017-12-05 ~ 2018-01-05</td>
+                </tr>
+                <tr>
+                  <th>可用工作日</th>
+                  <!--<td>{{data.code}}</td>-->
+                </tr>
+                <tr>
+                  <th>项目类型</th>
+                  <td></td>
+                </tr>
+                <tr>
+                  <th>项目状态</th>
+                  <td class="wait">未开始</td>
+                </tr>
+                <tr>
+                  <th>项目负责人</th>
+                  <td>{{data.chargeName}}</td>
+                </tr>
+                <tr>
+                  <th>产品负责人</th>
+                  <td></td>
+                </tr>
+                <tr>
+                  <th>测试负责人</th>
+                  <td></td>
+                </tr>
+                <tr>
+                  <th>发布负责人</th>
+                  <td></td>
+                </tr>
+                <tr>
+                  <th>访问控制</th>
+                  <td>默认设置(有项目视图权限，即可访问)</td>
+                </tr>
+                <tr>
+                  <th>分组白名单</th>
+                  <td>
+                  </td>
+                </tr>
+                </tbody>
+              </table>
+            </div>
+          </fieldset>
+
+          <fieldset class="fieldset">
+            <legend>其他信息</legend>
+            <div class="content">
+              <table class="table-content">
+                <tbody>
+                <tr>
+                  <th class="w-80px">工时统计</th>
+                  <td>可用工时<strong>1176.0</strong>工时<br>总共预计<strong>0</strong>工时<br>已经消耗<strong>0</strong>工时<br>预计剩余<strong>10</strong>工时</td>
+                </tr>
+                </tbody>
+              </table>
+            </div>
+          </fieldset>
+        </div>
+      </div>
+    </div>
+  </div>
+</template>
+
+<script>
+  import { mapGetters } from 'vuex'
+  import logData from '../../../components/history/logs.vue'
+  import editor from '../../../components/editor/editor.vue'
+  import api from 'src/api'
+
+  export default {
+    components: {logData, editor},
+    data () {
+      return {
+        item: {}
+      }
+    },
+    computed: {
+      ...mapGetters({
+        data: 'projectSurvey'
+      })
+    },
+    methods: {
+      submit () {
+        delete this.item.logList
+        api.post('/project/update', this.item).then((response) => {
+          if (response.code === 200) {
+//            this.$alert('添加成功, 3秒后跳转到项目列表')
+            this.$alert({
+              title: '提示',
+              okText: '确定',
+              content: '修改成功'
+            }).then(() => {
+              this.cancel()
+            })
+          } else {
+            this.$notify(response.message)
+          }
+        })
+      },
+      cancel () {
+//        this.$router.push('/project/survey/' + this.item.id)
+        window.location.href = '/project/survey/' + this.item.id
+      }
+    },
+    mounted () {
+      let item = JSON.stringify(this.data)
+      this.item = JSON.parse(item)
+      this.item.survey = 'survey'
+    },
+    asyncData ({store, route}) {
+      return store.dispatch('isProjectSurvey', route.params.id)
+    }
+  }
+</script>
+

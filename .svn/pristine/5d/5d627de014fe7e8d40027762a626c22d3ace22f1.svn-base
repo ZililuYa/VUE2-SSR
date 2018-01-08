@@ -1,0 +1,82 @@
+<template>
+  <div>
+    <div class="featurebar featurebar-right">
+      <ul class="ul">
+        <li id="undoneTab" class="active">部门结构</li>
+      </ul>
+    </div>
+    <div class="main-no-padding">
+      <div class="col-lg-4">
+        <panel :department="department" :title="title"></panel>
+      </div>
+      <div class="col-lg-8">
+        <panel-child></panel-child>
+      </div>
+    </div>
+  </div>
+</template>
+
+<script>
+  import { mapGetters } from 'vuex'
+  import panel from '../components/panel.vue'
+  import panelChild from '../components/panelChild.vue'
+  export default {
+    name: 'department',
+    data () {
+      return {
+        icon: 'sitemap',
+        title: '维护部门结构',
+        department: true
+      }
+    },
+    components: {
+      panel,
+      panelChild
+    },
+    computed: {
+      ...mapGetters({
+        state: 'projectState'
+      })
+    },
+    asyncData ({store}) {
+      store.dispatch('isProjectState')
+    },
+    methods: {
+      delGroup () {
+        /**
+         * 删除分组
+         */
+        let vm = this
+        this.$confirm({
+          title: '提示',
+          okText: '确定',
+          cancelText: '取消',
+          content: '您确定删除该用户分组吗？'
+        }).then(() => {
+          vm.doDel()
+        }).catch(() => {
+        })
+      },
+      doDel () {
+        /**
+         * 执行删除分组
+         */
+      },
+      addModalClose () {
+        /**
+         * 弹窗关闭
+         */
+        let vm = this
+        vm.addForm.name = ''
+        vm.addForm.describe = ''
+      }
+    }
+  }
+</script>
+
+<style lang="less">
+.main-inner {
+  padding: 20px;
+  overflow: hidden;
+}
+</style>

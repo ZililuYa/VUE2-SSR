@@ -1,0 +1,88 @@
+<template>
+  <div class="view">
+    <menuSub :menu="menu" :menuRight="menuRight"></menuSub>
+    <router-view class="wrap"></router-view>
+    <modal v-model="inviteModal" title="添加用户" @hide="" ref="modal" id="invite-modal" :footer="false">
+      <invite @art-code="doCodeModal" @close-model="closeInvite()"></invite>
+    </modal>
+  </div>
+</template>
+<script>
+  import { mapGetters, mapActions } from 'vuex'
+  import menuSub from '../../components/menu/Menusub.vue'
+  import invite from './components/invite.vue'
+  export default {
+    name: 'organizationIndex',
+    data () {
+      return {
+        inviteModal: false,
+        menuRight: [
+          {
+            icon: 'plus',
+            text: '添加用户',
+            url: '',
+            click: ($this) => {
+              this.inviteModal = true
+            }
+          }
+        ],
+        menu: [
+          {
+            text: '用户',
+            url: '/organization/index'
+          },
+          {
+            text: '部门',
+            url: '/organization/department'
+          },
+          {
+            text: '权限',
+            url: '/organization/power'
+          },
+          {
+            text: '公司',
+            url: '/organization/company'
+          },
+          {
+            text: '动态',
+            url: '/organization/log'
+          }
+        ]
+      }
+    },
+    components: {menuSub, invite},
+    computed: {
+      ...mapGetters({
+        getQrCode: 'getQrCode'   // 二维码
+      })
+    },
+    mounted() {
+      if (this.$route.path === '/organization') {
+        this.$router.push('/organization/index')
+      }
+    },
+    asyncData ({store, route}) {
+      return Promise.all([store.dispatch('isProjectTeam', {projectId: parseInt(route.params.id)}), store.dispatch('doMember'), store.dispatch('isDepartment', {})])
+    },
+    methods: {
+      ...mapActions([
+        'doQrCode'
+      ]),
+      doCodeModal () {
+        /**
+         * 生成二维码
+         */
+        let vm = this
+        vm.doQrCode({projectId: parseInt(vm.$route.params.id), content: '/acceptInvite'})
+        vm.codeModal = true
+      },
+      closeInvite () {
+        /**
+         * 关闭邀请弹框
+         */
+        let vm = this
+        vm.inviteModal = false
+      }
+    }
+  }
+</script>

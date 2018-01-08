@@ -1,0 +1,25 @@
+<template>
+  <div>
+    <p>User - {{data.title}}</p>
+  </div>
+</template>
+
+<script>
+  import { mapGetters } from 'vuex'
+
+  export default {
+    name: 'Project',
+    data () {
+      return {}
+    },
+    computed: {
+      ...mapGetters({
+        data: 'projectState'
+      })
+    },
+    components: {},
+    asyncData ({store}) {
+      store.dispatch('isProjectState')
+    }
+  }
+</script>

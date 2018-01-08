@@ -1,0 +1,10 @@
+import config from './config'
+
+import { createAPI } from 'create-api'
+
+const api = createAPI({
+  baseurl: config.baseurl,
+  timeout: config.timeout
+})
+
+export default api

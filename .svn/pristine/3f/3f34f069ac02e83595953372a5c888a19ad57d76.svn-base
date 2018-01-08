@@ -1,0 +1,77 @@
+<template>
+  <div :class="checked ? 'form-checkbox active':'form-checkbox'" @click="click">
+    <input type="checkbox" ref="check" @change="setStates">
+    <i class="fa fa-check"></i>
+  </div>
+</template>
+<script>
+  /**
+   * 全局checkbox
+   * */
+  export default {
+    data () {
+      return {
+        checked: false
+      }
+    },
+    watch: {
+      checked: function (newData, oldData) {
+//        if (newData) this.editor.html(newData)
+        if (this.$refs.check.checked !== newData) this.$refs.check.checked = newData
+      }
+    },
+    components: {},
+    mounted () {
+      if (this.iChecked) {
+        this.checked = true
+//        this.$refs.check.checked = true
+      }
+    },
+    props: {
+      iChecked: {
+        type: Boolean,
+        default: false
+      }
+    },
+    methods: {
+      click () {
+        this.$refs.check.click()
+      },
+      setStates () {
+//        console.log(this.$refs.check.checked)
+        if (this.$refs.check.checked !== this.checked) this.checked = this.$refs.check.checked
+        this.$emit('change')
+      }
+    }
+  }
+</script>
+
+<style lang="less">
+  .form-checkbox {
+    width: 18px;
+    height: 18px;
+    border: 1px solid #d3cfc8;
+    background-color: #fff;
+    cursor: pointer;
+    input {
+      display: none;
+    }
+    .fa {
+      display: none;
+    }
+    &:hover {
+      border: 2px solid #2489c5;
+    }
+    &.active {
+      border: 2px solid #2489c5;
+      background-color: #2489c5;
+      color: #fff;
+      text-align: center;
+      .fa {
+        display: block;
+        font-size: 12px;
+        margin-top: 1px;
+      }
+    }
+  }
+</style>

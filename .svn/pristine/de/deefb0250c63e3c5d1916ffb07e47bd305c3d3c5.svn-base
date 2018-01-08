@@ -1,0 +1,308 @@
+<template>
+  <div class="">
+    <div class="featurebar">
+      <ul class="ul">
+        <li id="undoneTab" class="active">
+          <a href="javascript:;">用户列表</a>
+        </li>
+        <li><a href="javascript:;" @click="search=!search"><i class="fa fa-search"></i> 搜索</a></li>
+        <li class="pull-right">
+          <b>
+            <a href="javascript:;" @click="inviteModal=true">
+              <i class="fa fa-plus"></i> 添加用户
+            </a>
+          </b>
+        </li>
+      </ul>
+    </div>
+    <div class="search-main" v-show="search">
+      <form class="form-inline">
+        <div class="form-group input-group-sm">
+          <select class="form-control" v-model="departData" @change="doDepartment">
+            <option>/</option>
+            <option v-for="item in departmentList" :value="item">{{item.name}}</option>
+          </select>
+        </div>
+        <div class="form-group input-group-sm">
+          <input type="text" class="form-control" id="searchUser" placeholder="请输入搜索关键字">
+        </div>
+        <button type="button" class="btn btn-primary btn-sm" @click="doSearch">搜索</button>
+        <div class="fr">
+          <a href="javascript:;" class="close" @click="search=!search"><i class="fa fa-close"></i></a>
+        </div>
+      </form>
+    </div>
+    <div class="main-no-padding">
+      <div class="col-lg-12">
+        <dataTable :tool="tool" :data="memberList.data" :page="page" @pageChange="tableChange" :columns="columns"></dataTable>
+      </div>
+    </div>
+    <invite :modal="inviteModal" @art-code="doCodeModal" @close-model="closeInvite"></invite>
+    <!-- <modal v-model="editModal" v-if="editModal" title="编辑用户" @hide="editModal=false" ref="modal" id="medit_modal" size="lg" :footer="false">
+      <edit-user :userDatas="userDatas"></edit-user>
+    </modal> -->
+  </div>
+</template>
+
+<script>
+import { mapGetters, mapActions } from 'vuex'
+import api from 'src/api'
+import cookies from 'js-cookie'
+import panel from '../components/panel.vue'
+import dataTable from '../../../components/table/table.vue'
+import invite from '../components/invite.vue'
+import editUser from './edit.vue'
+
+export default {
+  name: 'User',
+  title () {
+    return '用户'
+  },
+  data () {
+    return {
+      page: {
+        total: 232,
+        totalPage: 23,
+        pageIndex: 1,
+        pageSize: 20
+      },
+      icon: 'sitemap',
+      // title: '部门结构',
+      inviteModal: false,
+      editModal: false,
+      userDatas: '',
+      departData: {},
+      // user_prop: true,
+      search: false,
+      tool: [],
+      columns: [{
+        text: '',
+        type: 'selection',
+        align: 'center'
+      }, {
+        text: '真实姓名',
+        key: 'name',
+        align: 'center'
+      }, {
+        text: '用户名',
+        key: 'member',
+        align: 'center',
+        render: (h, params) => {
+          return params.member.name
+        }
+      }, {
+        text: '部门',
+        key: 'department',
+        align: 'center',
+        render: (h, params) => {
+          if (params.department) return params.department.name
+        }
+      }, {
+        text: '职位',
+        key: 'position',
+        align: 'center',
+        render: (h, params) => {
+          if (params.position) return params.position.name
+        }
+      }, {
+        text: '邮箱',
+        key: 'email',
+        align: 'center'
+      }, {
+        text: 'QQ',
+        key: 'qq',
+        align: 'center'
+      }, {
+        text: '性别',
+        key: 'sex',
+        align: 'center',
+        render: (h, params) => {
+          if (params.sex === 1) {
+            return '男'
+          } else {
+            return '女'
+          }
+        }
+      }, {
+        text: '入职日期',
+        key: 'member',
+        align: 'center',
+        render: (h, params) => {
+          let date = new Date(params.member.createTime)
+          let y = 1900 + date.getYear()
+          let m = '0' + (date.getMonth() + 1)
+          let d = '0' + date.getDate()
+          let dates = y + '-' + m.substring(m.length - 2, m.length) + '-' + d.substring(d.length - 2, d.length)
+          return dates
+        }
+      }, {
+        text: '操作',
+        align: 'center',
+        render: (h, params) => {
+          return h('div', [
+            h('a', {
+              attrs: {
+                href: 'javascript:void(0)',
+                title: '编辑'
+              },
+              on: {
+                click: () => {
+                  this.cookieUser(params)
+                }
+              }
+            }, [
+              h('span', {
+                class: 'glyphicon glyphicon-pencil'
+              })
+            ]),
+            h('a', {
+              attrs: {
+                href: 'javascript:void(0);',
+                title: '删除'
+              },
+              style: {
+                marginLeft: '5px'
+              },
+              on: {
+                click: () => {
+                  this.del(params)
+                }
+              }
+            }, [
+              h('span', {
+                class: 'glyphicon glyphicon-remove'
+              })
+            ])
+          ])
+        }
+      }]
+    }
+  },
+  computed: {
+    ...mapGetters({
+      departmentList: 'departmentList',
+      memberList: 'getMember'
+    })
+  },
+  components: {
+    panel,
+    dataTable,
+    editUser,
+    invite
+  },
+  created () {
+    this.getPage()
+    console.log('客户端获取用户列表数据', this.memberList)
+  },
+  asyncData ({ store }) {
+    // 服务端
+    // 获取所有用户列表
+    return Promise.all([store.dispatch('doMember'), store.dispatch('isDepartment', {})])
+  },
+  methods: {
+    ...mapActions([
+      'doMember'
+    ]),
+    cookieUser (params) {
+      cookies.set('select_user', params)
+      this.$router.push('/organization/editUser/' + params.id)
+    },
+    doSearch () {
+    },
+    getPage () {
+      /**
+        * 获取分页数据
+       **/
+      this.page.total = this.memberList.total
+      this.page.totalPage = this.memberList.current
+    },
+    doDepartment () {
+      /**
+        * 根据部门获取用户列表
+       **/
+      let vm = this
+      let param = {
+        departmentId: vm.departData.id
+      }
+      vm.doMember(param)
+    },
+    del (data) {
+      /**
+       * 删除用户
+       */
+      let vm = this
+      this.$confirm({
+        title: '提示',
+        okText: '确定',
+        cancelText: '取消',
+        content: '您确定删除该用户吗？'
+      }).then(() => {
+        vm.doDel(data)
+      }).catch(() => {
+      })
+    },
+    doDel (data) {
+      /**
+       * 执行删除用户
+       */
+      console.log(data)
+      let vm = this
+      let param = {}
+      param.id = data.id
+      api.get('/companyUser/delete', param).then((response) => {
+        if (response.code === 200) {
+          vm.doMember()
+          this.$notify({
+            type: 'success',
+            content: '删除成功'
+          })
+        } else {
+          this.$notify({
+            type: 'danger',
+            content: response.message
+          })
+        }
+      }).catch((error) => {
+        console.log(error)
+      })
+    },
+    closeInvite (flag) {
+      /**
+       * 关闭邀请弹框
+       */
+      let vm = this
+      if (flag) vm.doMember()
+      vm.inviteModal = false
+    },
+    doCodeModal () {
+      /**
+       * 生成二维码
+       */
+      let vm = this
+      vm.doQrCode({projectId: parseInt(vm.$route.params.id), content: '/acceptInvite'})
+      vm.codeModal = true
+    },
+    tableChange (data) {
+      /**
+        * 分页
+       **/
+      if (data) this.param.pageIndex = data
+      this.doMember(this.param)
+    }
+  }
+}
+</script>
+<style lang="less">
+.main-no-padding {
+  padding: 20px 5px;
+  overflow: hidden;
+}
+.checkbox-all {
+  padding-left: 25px;
+  line-height: 34px;
+}
+.art-pagination {
+  margin: 0;
+  padding: 0;
+}
+</style>

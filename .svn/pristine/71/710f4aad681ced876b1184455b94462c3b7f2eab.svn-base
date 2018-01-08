@@ -1,0 +1,38 @@
+<template>
+  <div>
+    <textarea :name="'editor'+id" ref="editor" style="width: 100%"></textarea>
+  </div>
+</template>
+<script>
+  /**
+   * 全局editor
+   * */
+  export default {
+    data () {
+      return {
+        editor: '',
+        id: parseInt(Math.random() * 9999999)
+      }
+    },
+    components: {},
+    mounted () {
+      this.init()
+    },
+    props: {
+      value: String
+    },
+    methods: {
+      init () {
+        let main = this
+        main.editor = window.KindEditor.create('textarea[name="editor' + main.id + '"]', {
+          themeType: 'simple',
+          allowFileManager: true,
+          afterChange: function () {
+            main.$emit('input', this.html())
+          }
+        })
+        if (main.value) main.editor.insertHtml(main.value)
+      }
+    }
+  }
+</script>

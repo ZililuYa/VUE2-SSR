@@ -1,0 +1,47 @@
+const fs = require('fs')
+const fse = require('fs-extra')
+const path = require('path')
+const resolve = file => path.resolve(__dirname, file)
+
+
+// 给dist添加依赖启动文件
+const file = resolve(`../dist/package.json`)
+const packageJson = `{
+  "name": "vue-ssr-server",
+  "version": "1.0.0",
+  "description": "A Vue.js project wuth vue 2.0, vue-router and vuex for server side rendering.",
+  "author": "zwq <obj_ee@163.com>",
+  "license": "MIT",
+  "scripts": {
+    "start": "cross-env NODE_ENV=production node server",
+    "pm2": "cross-env NODE_ENV=production pm2 start processes.json"
+  },
+  "dependencies": {
+    "express": "^4.14.0",
+    "lru-cache": "^4.0.1",
+    "cross-env": "^3.1.4",
+    "cookie-parser": "^1.4.3",
+    "serve-favicon": "^2.3.0",
+    "vue-server-renderer": "^2.3.4",
+    "http-proxy-middleware": "^0.17.3"
+  }
+}`
+
+// 把打包后的文件放在dist目录文件夹
+const copyDir = ['output/', 'public/', 'config/', 'processes.json', 'server.js']
+
+copyDir.forEach(function(item) {
+  let src = resolve(`../${item}`)
+  let dst = resolve(`../dist/${item}`)
+
+  fse.copy(src, dst, (err) => {
+    if (err) return console.error(err)
+    console.log('success!')
+    if (item === copyDir[copyDir.length - 1]) {
+      fs.writeFile(file, packageJson, (err) => {
+        if (err) throw err
+        console.log('ok!')
+      })
+    }
+  })
+})

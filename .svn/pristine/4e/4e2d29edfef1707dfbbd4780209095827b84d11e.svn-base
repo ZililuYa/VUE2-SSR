@@ -1,0 +1,250 @@
+<template>
+  <div class="">
+    <div class="featurebar featurebar-right">
+      <ul class="ul">
+        <li id="undoneTab" class="active">用户列表</li>
+        <li><a href="javascript:;" @click="search=!search"><i class="fa fa-search"></i> 搜索</a></li>
+      </ul>
+    </div>
+    <div class="search-main" v-show="search">
+      <form class="form-inline">
+        <div class="form-group input-group-sm">
+          <input type="text" class="form-control" id="searchUser" placeholder="请输入搜索关键字">
+        </div>
+        <button type="button" class="btn btn-primary btn-sm">搜索</button>
+        <div class="fr">
+          <a href="javascript:;" class="close" @click="search=!search"><i class="fa fa-close"></i></a>
+        </div>
+      </form>
+    </div>
+    <div class="main-no-padding">
+      <div class="col-lg-2">
+        <panel :title="title" :user="user_prop" @art-click="changeDepart"></panel>
+      </div>
+      <div class="col-lg-10">
+        <dataTable :tool="tool" :data="memberList.data" :currentPage="currentPage" @pageChange="tableChange" @change="tableChange" :totalPage="memberList.total" :columns="columns"></dataTable>
+      </div>
+    </div>
+    <modal v-model="editModal" v-if="editModal" title="编辑用户" @hide="editModal=false" ref="modal" id="medit_modal" size="lg" :footer="false">
+      <edit-user :userDatas="userDatas"></edit-user>
+    </modal>
+  </div>
+</template>
+
+<script>
+import { mapGetters, mapActions } from 'vuex'
+import api from 'src/api'
+import panel from '../components/panel.vue'
+import dataTable from '../../../components/table/table.vue'
+import editUser from './edit.vue'
+
+export default {
+  name: 'User',
+  data () {
+    return {
+      icon: 'sitemap',
+      title: '部门结构',
+      editModal: false,
+      userDatas: '',
+      user_prop: true,
+      search: false,
+      currentPage: 1,
+      tool: [{
+        text: '全选',
+        click: function (data) {
+          console.log('要批量删除的数据', data)
+        }
+      }, {
+        text: '全选',
+        click: function (data) {
+          console.log('要批量删除的数据', data)
+        }
+      }],
+      columns: [{
+        text: '',
+        type: 'selection',
+        align: 'center'
+      }, {
+        text: 'ID',
+        key: 'id',
+        align: 'center'
+      }, {
+        text: '真实姓名',
+        key: 'truename',
+        align: 'center'
+      }, {
+        text: '用户名',
+        key: 'name',
+        align: 'center'
+      }, {
+        text: '职位',
+        key: 'roleName',
+        align: 'center'
+      }, {
+        text: '邮箱',
+        key: 'email',
+        align: 'center'
+      }, {
+        text: 'QQ',
+        key: 'qq',
+        align: 'center'
+      }, {
+        text: '性别',
+        key: 'sex',
+        align: 'center',
+        render: (h, params) => {
+          if (params.sex === 1) {
+            return '男'
+          } else {
+            return '女'
+          }
+        }
+      }, {
+        text: '入职日期',
+        key: 'createTime',
+        align: 'center',
+        render: (h, params) => {
+          let date = new Date(params.createTime)
+          let y = 1900 + date.getYear()
+          let m = '0' + (date.getMonth() + 1)
+          let d = '0' + date.getDate()
+          let dates = y + '-' + m.substring(m.length - 2, m.length) + '-' + d.substring(d.length - 2, d.length)
+          return dates
+        }
+      }, {
+        text: '操作',
+        align: 'center',
+        render: (h, params) => {
+          return h('div', [
+            h('a', {
+              attrs: {
+                href: 'javascript:void(0)',
+                title: '编辑'
+              },
+              on: {
+                click: () => {
+                  this.userDatas = params
+                  console.log('选中数据', this.userDatas)
+                  this.editModal = true
+                }
+              }
+            }, [
+              h('span', {
+                class: 'glyphicon glyphicon-pencil'
+              })
+            ]),
+            h('a', {
+              attrs: {
+                href: 'javascript:void(0);',
+                title: '删除'
+              },
+              style: {
+                marginLeft: '5px'
+              },
+              on: {
+                click: () => {
+                  this.del(params)
+                }
+              }
+            }, [
+              h('span', {
+                class: 'glyphicon glyphicon-remove'
+              })
+            ])
+          ])
+        }
+      }]
+    }
+  },
+  computed: {
+    ...mapGetters({
+      memberList: 'getMember'
+    })
+  },
+  components: {
+    panel,
+    dataTable,
+    editUser
+  },
+  mounted () {
+    // 客户端
+  },
+  asyncData ({ store }) {
+    // 服务端
+    // 获取所有用户列表
+    store.dispatch('doMember')
+  },
+  methods: {
+    ...mapActions([
+      'doMember'
+    ]),
+    changeDepart (data) {
+      /**
+        * 根据部门获取用户列表
+       **/
+      console.log('改变部门', data)
+      let param = {
+        departmentId: data
+      }
+      this.doMember(param)
+    },
+    del (data) {
+      /**
+       * 删除用户
+       */
+      let vm = this
+      this.$confirm({
+        title: '提示',
+        okText: '确定',
+        cancelText: '取消',
+        content: '您确定删除该用户吗？'
+      }).then(() => {
+        vm.doDel(data)
+      }).catch(() => {
+      })
+    },
+    doDel (data) {
+      /**
+       * 执行删除用户
+       */
+      console.log(data)
+      let param = {}
+      param.id = data.id
+      api.post('/v1/mcpmember/delete', param).then((response) => {
+        if (response.code === 200) {
+          this.$notify({
+            type: 'success',
+            content: '删除成功'
+          })
+        } else {
+          this.$notify({
+            type: 'danger',
+            content: response.message
+          })
+        }
+      }).catch((error) => {
+        console.log(error)
+      })
+    },
+    tableChange () {
+      /**
+        * 分页
+       **/
+    }
+  }
+}
+</script>
+<style lang="less">
+.main-no-padding {
+  padding: 20px 5px;
+  overflow: hidden;
+}
+.checkbox-all {
+  padding-left: 25px;
+  line-height: 34px;
+}
+.art-pagination {
+  margin: 0;
+  padding: 0;
+}
+</style>

@@ -1,0 +1,84 @@
+/**
+ * @desc    创建服务端axios请求
+ * @file    create-api-server.js
+ * @author  zhangWuQiang
+ */
+import qs from 'qs'
+import axios from 'axios'
+
+console.log(`create-api-server`)
+
+const SSR = global.__VUE_SSR_CONTEXT__
+const cookies = SSR.cookies || {}
+const parseCookie = cookies => {
+  let cookie = ''
+  Object.keys(cookies).forEach(item => {
+    cookie += item + '=' + cookies[item] + '; '
+  })
+  return cookie
+}
+
+axios.interceptors.response.use((res) => {
+  if (res.status >= 200 && res.status < 300) {
+    return res
+  }
+  return Promise.reject(res)
+}, (error) => {
+  // 网络异常
+  return Promise.reject({ message: '网络异常，请刷新重试', error })
+})
+
+axios.interceptors.request.use(config => {
+  return config
+})
+
+export function createAPI ({ timeout, baseurl }) {
+  let api
+  axios.defaults.timeout = timeout
+  axios.defaults.baseURL = baseurl
+  if (process.__API__) {
+    api = process.__API__
+  } else {
+    api = {
+      get (url, params = {}) {
+        const cookie = parseCookie(cookies)
+        return new Promise((resolve, reject) => {
+          axios({
+            url,
+            params,
+            headers: {
+              'X-Requested-With': 'XMLHttpRequest',
+              cookie
+            },
+            method: 'get'
+          }).then(res => {
+            resolve(res.data)
+          }).catch(error => {
+            reject(error)
+          })
+        })
+      },
+      post (url, params = {}) {
+        const cookie = parseCookie(cookies)
+        console.log('cookie', cookie)
+        return new Promise((resolve, reject) => {
+          axios({
+            url,
+            data: qs.stringify(params),
+            method: 'post',
+            headers: {
+              'X-Requested-With': 'XMLHttpRequest',
+              'Content-Type': 'application/x-www-form-urlencoded',
+              cookie
+            }
+          }).then(res => {
+            resolve(res.data)
+          }).catch(error => {
+            reject(error)
+          })
+        })
+      }
+    }
+  }
+  return api
+}

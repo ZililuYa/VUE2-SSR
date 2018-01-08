@@ -1,0 +1,52 @@
+<template>
+  <div v-if="visible">
+    <win-header></win-header>
+    <router-view></router-view>
+  </div>
+</template>
+<script lang="babel">
+import { mapGetters } from 'vuex'
+import WinHeader from 'components/header/Header'
+import api from 'src/api/'
+
+export default {
+  data () {
+    return { title: '', visible: false }
+  },
+  computed: {
+    ...mapGetters({
+      status: 'getUserStatus'
+    })
+  },
+  mounted () {
+    // 客户端请求axios
+    // this.getUserLogin()
+  },
+  created () {
+    // 客户端 服务端同时请求axios
+    this.getUserLogin()
+  },
+  methods: {
+    getUserLogin () {
+      api.post('/islogin').then((response) => {
+        console.log(response)
+        if (response.httpCode === 200) {
+          this.visible = !this.visible
+        } else {
+          this.$router.replace({ path: '/login' })
+        }
+      }).catch((error) => {
+        console.log(error)
+      })
+    }
+  },
+  components: {
+    WinHeader
+  },
+  asyncData ({ store }) {
+    // 服务端请求axios
+    // return store.dispatch(`getUserStatus`)
+  }
+}
+
+</script>

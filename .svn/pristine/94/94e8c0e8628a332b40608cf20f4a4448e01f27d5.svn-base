@@ -1,0 +1,70 @@
+<template>
+  <nav id="nav" class="nav">
+    <ul class="fl">
+      <li><a href="">阿拉丁管控平台 <i class="fa fa-caret-down"></i></a></li>
+      <li><a href="">任务</a></li>
+      <li><a href="">需求</a></li>
+      <li><a href="">BUG</a></li>
+      <li><a href="">版本</a></li>
+      <li><a href="">测试</a></li>
+      <li><a href="">团队</a></li>
+      <li><a href="">动态</a></li>
+      <li><a href="">文档</a></li>
+      <li :class="this.$route.path.indexOf('/project/survey') !== -1 ? 'active' : ''">
+        <router-link to="/project/survey/110">概况</router-link>
+      </li>
+    </ul>
+    <div class="fr">
+      <ul>
+        <li><b><router-link to="/project/index"><i class="fa fa-th-large"></i> 所有项目</router-link></b></li>
+      </ul>
+    </div>
+  </nav>
+</template>
+
+<script>
+  export default {
+    data () {
+      return {}
+    },
+    mounted () {
+      console.log(this.$route)
+    }
+  }
+</script>
+
+<style lang="less">
+  .nav {
+    background-color: #e5e5e5;
+    margin: 0 -20px;
+    padding: 0 20px;
+    font-size: 14px;
+    position: relative;
+    height: 40px;
+    padding-left: 0;
+    ul {
+      padding-left: 20px;
+    }
+  }
+
+  .nav li {
+    line-height: 30px;
+    padding: 5px 0 1px;
+    display: block;
+    float: left;
+    color: #808080;
+    &.active {
+      font-weight: bold;
+    }
+  }
+
+  .nav a {
+    display: block;
+    padding: 0 7px;
+    color: #1e232f;
+    text-decoration: none;
+    &:hover {
+      background-color: #d1d1d1
+    }
+  }
+</style>

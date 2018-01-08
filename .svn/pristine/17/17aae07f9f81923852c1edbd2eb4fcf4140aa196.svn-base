@@ -1,0 +1,74 @@
+import api from 'src/api'
+
+const state = {
+  userLogins: {},
+  userStatus: {},
+  department: [],
+  member: []
+}
+
+const getters = {
+  getUserLogins: state => state.userLogins,
+  getUserStatus: state => state.userStatus,
+  getDepartment: state => state.department,
+  getMember: state => state.member
+}
+
+const mutations = {
+  USER_LOGINS: (state, userLogins) => {
+    state.userLogins = userLogins
+  },
+  USER_STATUS: (state, userStatus) => {
+    state.userStatus = userStatus
+  },
+  DEPARTMENT_DATA: (state, department) => {
+    state.department = department
+  },
+  MEMBER_DATA: (state, member) => {
+    state.member = member
+  }
+}
+
+const actions = {
+  doLogins({ state, commit }, response) {
+    console.log('response', response)
+    commit('USER_STATUS', response)
+  },
+  doIsLogins({ state, commit }) {
+    return api.get('/isLogin').then((response) => {
+      console.log('islogin.res.code', response.message)
+      commit('USER_STATUS', response)
+    }).catch((error) => {
+      console.log(error)
+    })
+  },
+  doDepartment({ state, commit }, param) {
+    let url = ''
+    if (param.pager) {
+      url = '/v1/department/pager'
+    } else {
+      url = '/v1/department/list'
+    }
+    return api.post(url, param).then((response) => {
+      commit('DEPARTMENT_DATA', response.data)
+      console.log('服务端部门列表', response.code)
+    }).catch((error) => {
+      console.log(error)
+    })
+  },
+  doMember({ state, commit }, param) {
+    return api.post('/v1/mcpmember/list', param).then((response) => {
+      commit('MEMBER_DATA', response)
+      console.log('服务端~~~用户列表', response)
+    }).catch((error) => {
+      console.log(error)
+    })
+  }
+}
+
+export default {
+  state,
+  getters,
+  mutations,
+  actions
+}

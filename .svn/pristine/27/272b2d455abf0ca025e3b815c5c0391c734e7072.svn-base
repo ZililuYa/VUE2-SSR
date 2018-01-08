@@ -1,0 +1,150 @@
+<template>
+  <div>
+    <div class="featurebar">
+      <ul class="ul">
+        <li class="active"><a href="">未完成</a>
+        </li>
+        <li><a href="">所有</a>
+        </li>
+        <li><a href="">未开始</a>
+        </li>
+        <li><a href="">进行中</a>
+        </li>
+        <li><a href="">已挂起</a>
+        </li>
+        <li><a href="">已完成</a>
+        </li>
+      </ul>
+    </div>
+    <div class="main" v-if="loading">
+      <dataTable :tool="tool" :data="state.data" :page="state.page" @pageChange="tableChange" :columns="columns"></dataTable>
+    </div>
+  </div>
+</template>
+
+<script>
+  import { mapGetters, mapActions } from 'vuex'
+  import dataTable from '../../../components/table/table.vue'
+
+  export default {
+    name: 'Project',
+    data () {
+      return {
+        loading: true,
+        tool: [{
+          text: '删除',
+          click: function (data) {
+            console.log('要批量删除的数据', data)
+          }
+        }],
+        columns: [{
+          type: 'selection'
+        }, {
+          text: '项目名称',
+//          key: 'name',
+          width: 300,
+          render: function (h, row) {
+            return h('a', {
+              attrs: {
+                href: 'javascript:;'
+              },
+              on: {
+                click: () => {
+                  window.sessionStorage.setItem('pid', row.id)
+                  window.sessionStorage.setItem('pname', row.name)
+                  window.location.href = '/project/survey/' + row.id
+                }
+              }
+            }, row.name)
+          }
+        }, {
+          text: '项目代号',
+          key: 'code'
+        }, {
+          text: '项目负责人',
+          key: 'chargeName'
+        }, {
+          text: '结束日期',
+          key: 'endTime',
+          render: function (h, row) {
+            return h('span', {}, new Date(row.endTime).Format('yyyy-MM-dd'))
+          }
+        }, {
+          text: '项目状态',
+          key: 'projectStatus'
+        }, {
+          text: '总预计'
+        }, {
+          text: '总耗时'
+        }, {
+          text: '总剩余'
+        }, {
+          text: '进度'
+        }],
+        param: {
+          pageSize: 20,
+          pageIndex: 1
+        }
+      }
+    },
+    computed: {
+      ...mapGetters({
+        state: 'projectState'
+      })
+    },
+    mounted () {
+      console.log('服务端接收到的数据：', this.state)
+    },
+    components: {dataTable},
+    asyncData ({store}) {
+      return store.dispatch('isProjectState')
+    },
+    methods: {
+      ...mapActions([
+        'isProjectState'
+      ]),
+      tableChange: function (data) {
+        this.param.pageIndex = data
+        this.isProjectState(this.param)
+      }
+    }
+  }
+</script>
+
+<style lang="less">
+  .main {
+    padding: 20px;
+  }
+
+  .featurebar {
+    display: block;
+    width: 100%;
+    font-size: 14px;
+    background: #ebf1f9;
+    border-bottom: 1px solid #ddd;
+    line-height: 30px;
+    min-height: 46px;
+    .ul {
+      margin: 0;
+      padding: 8px 13px;
+      li {
+        float: left;
+        line-height: 30px;
+        a {
+          color: #141414;
+          display: block;
+          padding: 0 7px;
+          text-decoration: none;
+          font-size: 13px;
+          transition: all 0.3s;
+          &:hover {
+            background-color: rgb(221, 221, 221);
+          }
+        }
+        &.active {
+          font-weight: bold;
+        }
+      }
+    }
+  }
+</style>

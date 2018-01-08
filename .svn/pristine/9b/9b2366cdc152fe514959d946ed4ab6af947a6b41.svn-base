@@ -1,0 +1,91 @@
+import api from 'src/api'
+
+const state = {
+  list: {},
+  job: {},
+  log: {},
+  company: {}
+}
+
+const getters = {
+  departmentList: state => state.list, // 部门
+  jobList: state => state.job, // 职位
+  logList: state => state.log, // 日志
+  companyData: state => state.company // 公司
+}
+const mutations = {
+  SET: (state, data) => {
+    /**
+     * 通用设置传输数据
+     * */
+    state[data.key] = data.data
+  }
+}
+
+const actions = {
+  isDepartment ({state, commit}, parameter = {}) {
+    let url = ''
+    if (parameter.pager) {
+      url = '/department/pager'
+    } else {
+      url = '/department/list'
+    }
+    return api.post(url, parameter).then((res) => {
+      let data = res
+      data.page = {
+        total: res.total,
+        pageIndex: res.current,
+        pageSize: parameter.pageSize || 20
+      }
+      commit('SET', {key: 'list', data: data})
+    }).catch((error) => {
+      console.log(error)
+    })
+  },
+  isLog ({state, commit}, parameter) {
+    return api.post('/log/pager', parameter).then((res) => {
+      let data = res
+      data.page = {
+        total: res.total,
+        pageIndex: res.current,
+        pageSize: parameter.pageSize || 20
+      }
+      commit('SET', {key: 'log', data: data})
+    }).catch((error) => {
+      console.log(error)
+    })
+  },
+  isJob ({state, commit}, parameter = {}) {
+    let url = ''
+    if (parameter.pager) {
+      url = '/position/pager'
+    } else {
+      url = '/position/list'
+    }
+    return api.post(url, parameter).then((res) => {
+      let data = res
+      data.page = {
+        total: res.total,
+        pageIndex: res.current,
+        pageSize: parameter.pageSize || 20
+      }
+      commit('SET', {key: 'job', data: data})
+    }).catch((error) => {
+      console.log(error)
+    })
+  },
+  isCompany ({state, commit}, parameter) {
+    return api.post('/company/select', parameter).then((res) => {
+      commit('SET', {key: 'company', data: res.data})
+    }).catch((error) => {
+      console.log(error)
+    })
+  }
+}
+
+export default {
+  state,
+  getters,
+  mutations,
+  actions
+}

@@ -1,0 +1,41 @@
+/**
+ *  封装storage
+ *  2017年08月23日11:28:20
+ *  ZhangWuQiang
+ */
+const JSON = window.JSON
+const localStorage = window.localStorage
+const sessionStorage = window.sessionStorage
+
+const local = {
+  getItem(name) {
+    let value = localStorage.getItem(name)
+    if (/^\{.*\}$/.test(value) || /^\[.*\]$/.test(value)) value = JSON.parse(value)
+    return value
+  },
+  setItem(name, value) {
+    if (typeof value === typeof {}) value = JSON.stringify(value)
+    return localStorage.setItem(name, value)
+  },
+  removeItem(name) {
+    return localStorage.removeItem(name)
+  }
+}
+const session = {
+  getItem(name) {
+    let value = sessionStorage.getItem(name)
+    if (/^\{.*\}$/.test(value) || /^\[.*\]$/.test(value)) value = JSON.parse(value)
+    return value
+  },
+  setItem(name, value) {
+    if (typeof value === typeof {}) value = JSON.stringify(value)
+    return sessionStorage.setItem(name, value)
+  },
+  removeItem(name) {
+    return sessionStorage.removeItem(name)
+  }
+}
+export default {
+  local,
+  session
+}

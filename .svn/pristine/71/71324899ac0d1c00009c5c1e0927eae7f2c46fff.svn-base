@@ -1,0 +1,46 @@
+<template>
+  <div class="view">
+    <menuSub :menu="menu"></menuSub>
+    <router-view class="wrap"></router-view>
+  </div>
+</template>
+
+<script>
+  import { mapGetters } from 'vuex'
+  import menuSub from '../../components/menu/Menusub.vue'
+
+  export default {
+    name: 'systemIndex',
+    data () {
+      return {
+        currentPage: 1,
+        totalPage: 99,
+        menu: [
+          {
+            text: '自定义',
+            url: '/system/custom/index'
+          },
+          {
+            text: '发信',
+            url: '/system/send'
+          }
+        ]
+      }
+    },
+    computed: {
+      ...mapGetters({
+        data: ''
+      })
+    },
+    components: {menuSub},
+    asyncData ({store}) {
+      store.dispatch('isProjectState')
+    }
+  }
+</script>
+
+<style>
+  .wrap {
+    padding: 0 !important;
+  }
+</style>

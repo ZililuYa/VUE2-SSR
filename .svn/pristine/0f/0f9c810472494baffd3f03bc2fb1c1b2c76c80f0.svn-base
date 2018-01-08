@@ -1,0 +1,151 @@
+<template>
+  <div>
+    <div class="featurebar featurebar-right">
+      <ul class="ul">
+        <li id="undoneTab" class="active">所有权限</li>
+      </ul>
+    </div>
+    <div class="main">
+      {{powerList.jurisdictionList}}
+      <table class="table table-bordered">
+        <thead>
+          <tr>
+            <th>模块</th>
+            <th>方法</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-if="powerList.jurisdictionList" v-for="item in powerList.jurisdictionList">
+            <td>
+              {{item.name}}
+            </td>
+            <td>
+              <span v-if="item.child" v-for="child in item.child">
+                <input type="checkbox" :id="child.id" :value="child.id" class="" v-model="checkedList"> {{child.name}}
+              </span>
+            </td>
+          </tr>
+          <tr v-else>
+            <td colspan="2">
+              暂无数据
+            </td>
+          </tr>
+          <tr>
+            <td><input type="checkbox" id="inlineCheckbox1" value="option1"> 全选</td>
+            <td>
+              <div class="view-btn-group">
+                <btn class="" type="primary" @click="powerSubmit">保存</btn>
+                <a href="javascript:void(0)" class="btn btn-default" @click="goBack">返回</a>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</template>
+
+<script>
+  import { mapGetters } from 'vuex'
+  import api from 'src/api'
+  export default {
+    name: 'editPower',
+    data () {
+      return {
+        index: false,
+        checkedList: []
+      }
+    },
+    computed: {
+      ...mapGetters({
+        powerList: 'powerList'   // 所有权限
+      })
+    },
+    mounted () {
+      console.log('客户端接收到的~~~所有权限~~~数据：', this.powerList)
+    },
+    asyncData ({store, route}) {
+      let param = {
+        id: route.params.id,
+        type: 2
+      }
+      store.dispatch('isPowerList', param)
+    },
+    methods: {
+      powerSubmit () {
+        /**
+         * 提交
+         **/
+        let vm = this
+        let params = {}
+        params.menuId = vm.checkedList
+        params.id = vm.$route.params.id
+        api.post('/v1/permissiongroup/update', params).then((response) => {
+          if (response.code === 200) {
+            console.log('修改成功', response)
+            vm.geBack()
+          } else {
+            this.$notify({
+              type: 'danger',
+              content: response.message
+            })
+          }
+        }).catch((error) => {
+          console.log(error)
+        })
+      },
+      goBack () {
+        /**
+         * 返回上一页
+         **/
+        this.$router.go(-1)
+      }
+    }
+  }
+</script>
+
+<style lang="less">
+  .main {
+    padding: 20px;
+  }
+  .featurebar-right {
+    display: block;
+    width: 100%;
+    font-size: 14px;
+    background: #ebf1f9;
+    border-bottom: 1px solid #ddd;
+    line-height: 30px;
+    min-height: 46px;
+    .ul {
+      margin: 0;
+      padding: 8px 13px;
+      li {
+        padding:0 10px;
+        float: left;
+        line-height: 30px;
+        transition: all 0.3s;
+        button {
+          margin-top: -4px;
+        }
+        a {
+          color: #141414;
+          display: block;
+          padding: 0 7px;
+          text-decoration: none;
+          font-size: 13px;
+        }
+        &.active {
+          font-weight: bold;
+        }
+        &:hover {
+          background-color: rgb(221, 221, 221);
+        }
+      }
+    }
+  }
+  #add_modal {
+    .control-label {
+      text-align: left;
+    }
+  }
+</style>

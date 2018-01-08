@@ -1,0 +1,115 @@
+<template>
+  <modal v-model="open" :title="title" @hide="callback" ref="modal" id="modal-demo" size="lg">
+    <formData ref="form">
+      <div class="row">
+        <div class="form-group col-lg-12 input-group-sm">
+          <label>总消耗</label>
+          <div class="input-group input-group-sm">
+            <input type="text" class="form-control" v-model="item.consumeTime" validate="required|number">
+            <label class="input-group-addon">小时</label>
+          </div>
+        </div>
+        <div class="form-group col-lg-12 input-group-sm" v-if="typeList.data">
+          <label>指派给</label>
+          <select class="form-control" v-model="item.assignedId" validate="required">
+            <option v-for="i in typeList.data.team" :value="i.memberId">{{i.memberName}}</option>
+          </select>
+        </div>
+        <div class="form-group col-lg-12 input-group-sm">
+          <label>完成时间</label>
+          <dropdown class="form-group">
+            <div class="input-group  input-group-sm">
+              <input class="form-control" type="text" v-model="item.finishTimeDate" readonly="readonly" validate="required">
+              <div class="input-group-btn">
+                <btn class="dropdown-toggle"><i class="glyphicon glyphicon-calendar"></i></btn>
+              </div>
+            </div>
+            <template slot="dropdown">
+              <li>
+                <date-picker v-model="item.finishTimeDate"/>
+              </li>
+            </template>
+          </dropdown>
+        </div>
+        <div class="form-group col-lg-12 input-group-sm">
+          <label>备注</label>
+          <!--<textarea type="text" class="form-control" v-model="item.remark" validate="required"></textarea>-->
+          <editor v-model="item.remark"></editor>
+        </div>
+      </div>
+    </formData>
+    <div slot="footer">
+      <btn size="sm" @click="open=false">取消</btn>
+      <btn size="sm" type="primary" @click="submit">确定完成</btn>
+    </div>
+  </modal>
+</template>
+<script>
+  import formData from '../../../components/form/form.vue'
+  import api from 'src/api'
+  import cookies from 'js-cookie'
+  import editor from '../../../components/editor/editor.vue'
+
+  export default {
+    data () {
+      return {
+        open: false,
+        item: {},
+        title: '',
+        userId: ''
+      }
+    },
+    components: {formData, editor},
+    mounted () {
+      this.open = !!this.value
+      this.userId = cookies.getJSON('user_db').id
+    },
+    watch: {
+      'value' (val, oldValue) {
+        this.setNewValue(val)
+      }
+    },
+    props: {
+      value: Boolean,
+      typeList: Object,
+      data: Object
+    },
+    methods: {
+      setNewValue (val) {
+        this.item = {}
+        this.title = '[' + this.data.id.toString() + '] ' + this.data.name + ' > 完成'
+        this.open = val
+      },
+      callback (hsg) {
+        this.$emit('input', false)
+      },
+      submit () {
+        let fo = this.$refs.form.validate()
+        if (!fo) return false
+        this.item.id = this.data.id
+        this.item.status = '已完成'
+        this.item.finishId = this.userId
+        if (this.item.finishTimeDate) {
+          this.item.finishTime = new Date(this.item.finishTimeDate).getTime()
+        }
+        api.post('/v1/task/update', this.item).then((response) => {
+          if (response.code === 200) {
+//            this.$alert('添加成功, 3秒后跳转到项目列表')
+            this.$alert({
+              title: '提示',
+              okText: '确定',
+              content: '完成成功'
+            }).then(() => {
+//              this.$router.push('/project/task/' + this.item.projectId)
+              this.open = false
+              this.$emit('input', false)
+              this.$emit('success')
+            })
+          } else {
+            this.$notify(response.message)
+          }
+        })
+      }
+    }
+  }
+</script>

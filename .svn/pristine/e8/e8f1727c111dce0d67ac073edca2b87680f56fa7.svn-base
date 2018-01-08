@@ -1,0 +1,244 @@
+<template>
+  <div class="">
+    <div class="outer">
+      <div class="company-inner">
+        <div class="featurebar">
+          <ul class="ul">
+            <li><b>发信配置<span style="padding:0 8px">&gt;</span>编辑配置</b></li>
+          </ul>
+        </div>
+        <div class="company-info">
+          <formData ref="form">
+            <div class="form-group">
+              <label for="name" class="col-sm-3 control-label">发信邮箱</label>
+              <div class="col-sm-9">
+                <input type="email" v-model="ruleForm.username" class="form-control" id="username" validate="required|email">
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="fax" class="col-sm-3 control-label">smtp服务器</label>
+              <div class="col-sm-9">
+                <input type="text" v-model="ruleForm.mailHost" class="form-control" id="mailHost">
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="officialWebsite" class="col-sm-3 control-label">smtp帐号</label>
+              <div class="col-sm-9">
+                <input type="text" v-model="ruleForm.username" class="form-control">
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="officialWebsite" class="col-sm-3 control-label">smtp密码</label>
+              <div class="col-sm-9">
+                <input type="password" v-model="ruleForm.passwd" class="form-control" id="passwd">
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="intranet" class="col-sm-3 control-label">加密方式</label>
+              <div class="col-sm-9">
+                <input type="text" v-model="ruleForm.codeType" class="form-control" id="codeType" disabled>
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="intranet" class="col-sm-3 control-label">编码	</label>
+              <div class="col-sm-9">
+                <input type="text" class="form-control" value="UTF-8" disabled>
+              </div>
+            </div>
+            <div class="form-group btn-groups">
+              <btn class="" type="primary" @click="submit">保存</btn>
+              <btn class="" @click="sendModal=true">发信</btn>
+              <!-- <btn class="" @click="">重置</btn> -->
+            </div>
+          </formData>
+        </div>
+      </div>
+    </div>
+    <modal v-model="sendModal" title="发送邮件" @hide="modalClose" ref="modal" id="send_modal" :footer="false" size="lg">
+      <formData class="form-horizontal send-form" ref="sendForm">
+        <div class="form-group">
+          <label for="name" class="col-sm-3 control-label"> 收件人</label>
+          <div class="col-sm-9">
+            <input type="text" v-model="sendDatas.toUser" class="form-control" id="toUser" validate="required|email" placeholder="收件人账号">
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="name" class="col-sm-3 control-label"> 主题</label>
+          <div class="col-sm-9">
+            <input type="text" v-model="sendDatas.mailSubject" class="form-control" id="mailSubject" validate="required" placeholder="邮件主题">
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="telephone" class="col-sm-3 control-label">内容</label>
+          <div class="col-sm-9">
+            <editor v-model="sendDatas.content"></editor>
+          </div>
+        </div>
+        <div class="form-group btn-groups">
+          <btn class="" type="primary" @click="sendSubmit">发送</btn>
+        </div>
+      </formData>
+    </modal>
+  </div>
+</template>
+
+<script>
+  import { mapGetters, mapActions } from 'vuex'
+  import cookies from 'js-cookie'
+  import api from 'src/api'
+  import formData from '../../../components/form/form.vue'
+  import editor from '../../../components/editor/editor.vue'
+  export default {
+    name: 'department',
+    data () {
+      return {
+        ruleForm: {
+          id: '',
+          username: '',
+          mailHost: '',
+          passwd: '',
+          codeType: 'ttl'
+        },
+        sendDatas: {
+          toUser: '',
+          mailSubject: '',
+          content: ''
+        },
+        sendModal: false
+      }
+    },
+    computed: {
+      ...mapGetters({
+        sendData: 'sendData'
+      })
+    },
+    components: {formData, editor},
+    mounted () {
+      // 客户端
+      console.log('客户端~~~~~~发信设置', this.sendData)
+      console.log('用户信息cookie', cookies.getJSON('user_db'))
+      if (this.sendData[0]) {
+        this.ruleForm.id = this.sendData[0].id
+        this.ruleForm.username = this.sendData[0].username
+        this.ruleForm.mailHost = this.sendData[0].mailHost
+        this.ruleForm.passwd = this.sendData[0].passwd
+        this.ruleForm.codeType = this.sendData[0].codeType
+      }
+    },
+    asyncData ({store}) {
+      store.dispatch('isSend')
+    },
+    methods: {
+      ...mapActions([
+        'isSend'
+      ]),
+      submit () {
+        /**
+         * 验证
+         */
+        console.log(this.ruleForm)
+        let fo = this.$refs.form.validate()
+        if (!fo) {
+          console.log('验证未通过')
+          return false
+        } else {
+          this.doSubmit()
+        }
+      },
+      doSubmit () {
+        /**
+         * 编辑提交
+         */
+        let vm = this
+        api.post('/v1/mail/insertAndUpdate', vm.ruleForm).then((response) => {
+          if (response.code === 200) {
+            this.$alert({
+              title: '提示',
+              okText: '确定',
+              content: '编辑成功'
+            }).then(() => {
+              vm.isSend()
+            })
+          } else {
+            this.$alert({
+              content: response.message
+            })
+          }
+        })
+      },
+      sendSubmit () {
+        /**
+         * 发送信息
+         */
+        let vm = this
+        console.log(vm.sendDatas)
+        let form = vm.$refs.sendForm.validate()
+        let fo = vm.$refs.form.validate()
+        if (form && fo) {
+          let param = vm.ruleForm
+          param.toUser = vm.sendDatas.toUser
+          param.mailSubject = vm.sendDatas.mailSubject
+          param.content = vm.sendDatas.content
+          api.post('/v1/mail/send', vm.ruleForm).then((response) => {
+            vm.modalClose()
+            if (response.code === 200) {
+              this.$notify({
+                type: 'success',
+                content: '发送成功'
+              })
+            } else {
+              this.$notify({
+                type: 'danger',
+                content: response.message
+              })
+            }
+          })
+        } else {
+          console.log('验证未通过')
+          return false
+        }
+      },
+      modalClose () {
+        /**
+         * 弹窗关闭
+         */
+        let vm = this
+        vm.sendModal = false
+        vm.sendDatas.toUser = ''
+        vm.sendDatas.mailSubject = ''
+        vm.sendDatas.content = ''
+      }
+    }
+  }
+</script>
+
+<style lang="less">
+.outer {
+  padding:20px;
+}
+.company-inner {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 0;
+  border: 1px solid #ddd;
+  .company-info {
+    padding:20px;
+    .control-label {
+      line-height: 34px;
+      b {
+        display: inline-block;
+        width:100px;
+      }
+    }
+  }
+}
+.send-form {
+  .control-label {
+    line-height: 34px;
+  }
+}
+.btn-groups {
+  display: block!important;
+  text-align: center;
+}
+</style>

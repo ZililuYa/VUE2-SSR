@@ -1,0 +1,80 @@
+import api from 'src/api'
+
+const state = {
+  list: [],
+  job: [],
+  log: [],
+  company: {}
+}
+
+const getters = {
+  departmentList: state => state.list,  // 部门
+  jobList: state => state.job,    // 职位
+  logList: state => state.log,   // 日志
+  companyData: state => state.company   // 公司
+}
+
+const mutations = {
+  DEPARTMENT_DATA: (state, data) => {
+    console.log('服务端部门列表结果', data)
+    state.list = data.data
+  },
+  JOB_DATA: (state, job) => {
+    state.job = job
+  },
+  LOG_DATA: (state, data) => {
+    console.log('服务端日志列表结果', data)
+    state.log = data.data
+  },
+  COMPANY_DATA: (state, data) => {
+    state.company = data
+  }
+}
+
+const actions = {
+  isDepartment ({state, commit}, parameter) {
+    console.log('开始获取部门列表')
+    let url = ''
+    if (parameter.pager) {
+      url = '/department/pager'
+    } else {
+      url = '/department/list'
+    }
+    return api.post(url, parameter).then((res) => {
+      commit('DEPARTMENT_DATA', res)
+    }).catch((error) => {
+      console.log(error)
+    })
+  },
+  isLog ({state, commit}, parameter) {
+    console.log('开始获取日志列表')
+    return api.post('/log/pager', parameter).then((res) => {
+      commit('LOG_DATA', res)
+    }).catch((error) => {
+      console.log(error)
+    })
+  },
+  isJob({ state, commit }, param) {
+    return api.post('/role/list', param).then((response) => {
+      commit('JOB_DATA', response)
+      console.log('服务端~~~职位列表', response)
+    }).catch((error) => {
+      console.log(error)
+    })
+  },
+  isCompany({ state, commit }, param) {
+    return api.post('/company/detail', param).then((response) => {
+      commit('COMPANY_DATA', response.data)
+      console.log('服务端~~~公司信息', response)
+    }).catch((error) => {
+      console.log(error)
+    })
+  }
+}
+
+export default {
+  state,
+  getters,
+  mutations,
+  actions
+}

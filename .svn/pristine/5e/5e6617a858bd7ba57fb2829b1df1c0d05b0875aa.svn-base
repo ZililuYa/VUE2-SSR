@@ -1,0 +1,28 @@
+<template>
+	<nav id="nav" class="nav">
+		<ul>
+			<li><a href="">代办</a></li>
+			<li><a href="">任务</a></li>
+			<li><a href="">测试</a></li>
+		</ul>
+	</nav>
+</template>
+
+<style lang="stylus">
+.nav
+	background-color: #e5e5e5;
+	margin: 0 -20px;
+	padding: 0 20px;
+	font-size: 14px;
+	position: relative;
+	height: 40px;
+.nav li
+	line-height: 30px;
+	padding: 5px 0 1px;
+	display: block;
+	float: left;
+	color: #808080;
+.nav a
+	display: block;
+	padding: 0 7px;
+</style>

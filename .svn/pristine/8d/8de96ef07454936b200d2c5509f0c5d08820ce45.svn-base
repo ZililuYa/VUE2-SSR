@@ -1,0 +1,96 @@
+import api from 'src/api'
+
+const state = {
+  list: {},
+  detail: {},
+  taskList: {}
+}
+
+const getters = {
+  projectState: state => state.list,
+  projectSurvey: state => state.detail,
+  projectTaskList: state => state.taskList
+}
+
+const mutations = {
+  SET_DATA: (state, data) => {
+    console.log('项目列表的结果:::::::::::::::::::::', data)
+    // var d2 = JSON.stringify(data)
+    // state.data = JSON.parse(d2)
+    state.list.data = data.data
+    state.list.page = {
+      total: data.total,
+      totalPage: Math.ceil(data.total / 20),
+      pageIndex: data.current,
+      pageSize: 20
+    }
+  },
+  SET_SURVEY: (state, data) => {
+    console.log('SET_SURVEY:::::::::::::::::::::::::::', data)
+    state.detail = data.data
+  },
+  SET_TASK: (state, data) => {
+    console.log('SET_TASK:::::::::::::::::::::::::::', data)
+    state.taskList = data
+    state.taskList.page = {
+      total: data.total,
+      totalPage: Math.ceil(data.total / 20),
+      pageIndex: data.current,
+      pageSize: 20
+    }
+  }
+}
+
+const actions = {
+  isProjectTask ({state, commit}, parameter = {}) {
+    console.log('::::::::::::::::::::::::isProjectTask 开始执行', parameter)
+    if (!parameter.projectId) {
+      return
+    }
+    return api.post('/v1/task/pager', parameter).then((res) => {
+      commit('SET_TASK', res)
+    }).catch((error) => {
+      console.log(error)
+    })
+  },
+  isProjectSurvey ({state, commit}, id) {
+    console.log('::::::::::::::::::::::::isProjectSurvey 开始执行')
+    console.log(id)
+    if (!id) {
+      return
+    }
+    return api.post('/v1/project/detail', {id}).then((res) => {
+      commit('SET_SURVEY', res)
+    }).catch((error) => {
+      console.log(error)
+    })
+  },
+  isProjectState ({state, commit}, parameter = {pageSize: 20}) {
+    console.log(':::::::::::::::::::isProjectState 开始执行')
+    // let data = {
+    //   current: 1,
+    //   total: 7,
+    //   data: [{
+    //     name: '小米'
+    //   }, {
+    //     name: '苹果'
+    //   }, {
+    //     name: '华为'
+    //   }]
+    // }
+    // commit('SET_DATA', data)
+    return api.post('/v1/project/pager', parameter).then((res) => {
+      commit('SET_DATA', res)
+      // commit('SET_DATA', data)
+    }).catch((error) => {
+      console.log(error)
+    })
+  }
+}
+
+export default {
+  state,
+  getters,
+  mutations,
+  actions
+}

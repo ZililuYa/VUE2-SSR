@@ -1,0 +1,55 @@
+<template>
+  <div class="counter">
+    <button @click='increment' class="btn btn-info">Increment +1</button>
+    <button @click='decrement' class="btn btn-info">Decrement -1</button>
+    <h3>Count is {{ count }}</h3>
+    <p>
+      <input v-model="firs" @keyup="getter"> x
+      <input v-model="last" @keyup="getter"> = {{cont}}
+    </p>
+  </div>
+</template>
+
+<script>
+import { mapGetters, mapActions } from 'vuex'
+import { demo } from 'src/util/util'
+export default {
+  name: 'Counter',
+  data () {
+    return {
+      cont: '?',
+      firs: '',
+      last: ''
+    }
+  },
+  computed: {
+    ...mapGetters({
+      count: 'getCount'
+    })
+  },
+  methods: {
+    ...mapActions([
+      'increment',
+      'decrement'
+    ]),
+    getter () {
+      const f = this.firs
+      const l = this.last
+      this.cont = demo(f, l)
+    }
+  }
+}
+</script>
+
+<style>
+* {
+  outline: 0
+}
+
+.counter input {
+  display: inline-block;
+  width: 20px;
+  height: 16px;
+}
+
+</style>

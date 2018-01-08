@@ -1,0 +1,49 @@
+import api from 'src/api'
+
+const state = {
+  list: {},
+  menu: {}
+}
+
+const getters = {
+  powerList: state => state.list,
+  menuList: state => state.menu
+}
+
+const mutations = {
+  POWER_DATA: (state, data) => {
+    console.log('服务端权限组列表结果', data)
+    state.list = data
+  },
+  MENU_DATA: (state, data) => {
+    console.log('服务端菜单列表结果', data)
+    state.menu = data
+  }
+}
+
+const actions = {
+  isPowerList ({state, commit}, parameter = {companyId: 24}) {
+    console.log('开始获取权限组列表')
+    return api.post('/v1/permissiongroup/list', parameter).then((res) => {
+      commit('POWER_DATA', res)
+    }).catch((error) => {
+      console.log(error)
+    })
+  },
+  isMenuList ({state, commit}, parameter = {}) {
+    console.log('开始获取菜单列表')
+    // commit('MENU_DATA', '11111')
+    return api.post('/v1/menu/list', parameter).then((res) => {
+      commit('MENU_DATA', res)
+    }).catch((error) => {
+      console.log(error)
+    })
+  }
+}
+
+export default {
+  state,
+  getters,
+  mutations,
+  actions
+}

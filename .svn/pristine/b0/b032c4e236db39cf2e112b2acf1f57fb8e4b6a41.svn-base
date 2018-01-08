@@ -1,0 +1,126 @@
+<template>
+  <div>
+    <div class="main">
+      <div class="panel panel-default">
+        <div class="panel-heading">
+          <span class="panel-heading-txt">最新动态</span>
+          <a href="/organization/log" class="pull-right">更多<span class="glyphicon glyphicon-menu-right"></span></a>
+        </div>
+        <div class="panel-body">
+          <p>12月19日 15:45, 刘杰 <em>关闭了</em> 任务 <a href="/zentao/task-view-681.html">登录-后端</a>。</p>
+          <p>12月19日 15:41, 胡盼盼 <em>退出登录</em> <a href="/zentao/user-view-11.html"></a>。</p>
+          <p>12月19日 15:45, 刘杰 <em>关闭了</em> 任务 <a href="/zentao/task-view-681.html">登录-后端</a>。</p>
+          <p>12月19日 15:45, 刘杰 <em>关闭了</em> 任务 <a href="/zentao/task-view-681.html">登录-后端</a>。</p>
+        </div>
+      </div>
+      <div class="panel panel-default">
+        <div class="panel-heading">
+          <span class="panel-heading-txt">进行中的项目</span>
+          <a href="/project/index" class="pull-right">更多<span class="glyphicon glyphicon-menu-right"></span></a>
+        </div>
+        <dataTable :columns="goingPro"></dataTable>
+      </div>
+      <div class="panel panel-default">
+        <div class="panel-heading">
+          <span class="panel-heading-txt">指派给我的任务</span>
+          <a href="#" class="pull-right">更多<span class="glyphicon glyphicon-menu-right"></span></a>
+        </div>
+        <dataTable :columns="myPro"></dataTable>
+      </div>
+    </div>
+  </div>
+</template>
+<script>
+  import { mapGetters } from 'vuex'
+  import dataTable from '../../../components/table/table.vue'
+  export default {
+    name: 'index',
+    title () {
+      return '首页'
+    },
+    data () {
+      return {
+        goingPro: [{
+          text: '项目名称',
+          key: 'name',
+          width: 300,
+          render: function (h, row) {
+            return h('a', {
+              attrs: {
+                href: 'javascript:;'
+              },
+              on: {
+                click: () => {
+                  window.sessionStorage.setItem('pid', row.id)
+                  window.sessionStorage.setItem('pname', row.name)
+                  window.location.href = '/project/survey/' + row.id
+                }
+              }
+            }, row.name)
+          }
+        }, {
+          text: '结束日期',
+          key: 'endTime',
+          render: function (h, row) {
+            return h('span', {}, new Date(row.endTime).Format('yyyy-MM-dd'))
+          }
+        }, {
+          text: '状态',
+          key: 'projectStatus'
+        }, {
+          text: '总预计'
+        }, {
+          text: '总耗时'
+        }, {
+          text: '总剩余'
+        }, {
+          text: '进度'
+        }, {
+          text: '燃尽图'
+        }],
+        myPro: [{
+          text: 'ID'
+        }, {
+          text: 'P'
+        }, {
+          text: '任务名称',
+          key: 'name',
+          width: 300,
+          render: function (h, row) {
+            return h('a', {
+              attrs: {
+                href: 'javascript:;'
+              },
+              on: {
+                click: () => {
+                  window.sessionStorage.setItem('pid', row.id)
+                  window.sessionStorage.setItem('pname', row.name)
+                  window.location.href = '/project/survey/' + row.id
+                }
+              }
+            }, row.name)
+          }
+        }, {
+          text: '预'
+        }, {
+          text: '截止日期',
+          key: 'endTime',
+          render: function (h, row) {
+            return h('span', {}, new Date(row.endTime).Format('yyyy-MM-dd'))
+          }
+        }, {
+          text: '状态',
+          key: 'projectStatus'
+        }]
+      }
+    },
+    computed: {
+      ...mapGetters({
+        state: 'projectState'
+      })
+    },
+    mounted () {
+    },
+    components: {dataTable}
+  }
+</script>

@@ -1,0 +1,49 @@
+<template>
+  <div class="view">
+    <menuSub :menuRight="menuRight" :menu="menu"></menuSub>
+    <router-view class="wrap"></router-view>
+  </div>
+</template>
+
+<script>
+  import { mapGetters } from 'vuex'
+  import menuSub from '../../components/menu/Menusub.vue'
+
+  export default {
+    name: 'OrganizationIndex',
+    data () {
+      return {
+        currentPage: 1,
+        totalPage: 99,
+        menuRight: [],
+        menu: [
+          {
+            text: '用户'
+          },
+          {
+            text: '权限'
+          },
+          {
+            text: '公司'
+          },
+          {
+            text: '动态'
+          }
+        ]
+      }
+    },
+    computed: {
+      ...mapGetters({
+      })
+    },
+    components: {menuSub},
+    asyncData ({store}) {
+    }
+  }
+</script>
+
+<style>
+  .wrap {
+    padding: 0 !important;
+  }
+</style>

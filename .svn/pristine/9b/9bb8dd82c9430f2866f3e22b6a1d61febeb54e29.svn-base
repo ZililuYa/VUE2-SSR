@@ -1,0 +1,94 @@
+<template>
+  <div class="">
+    <div class="main">
+      <div class="view-main">
+        <div class="col-lg-2">
+          <b>允许访问的视图</b>
+        </div>
+        <div class="col-lg-8">
+          <form class="">
+            <label class="checkbox-inline">
+              <input type="checkbox" id="inlineCheckbox1" value="option1"> 1
+            </label>
+            <label class="checkbox-inline">
+              <input type="checkbox" id="inlineCheckbox2" value="option2"> 2
+            </label>
+            <label class="checkbox-inline">
+              <input type="checkbox" id="inlineCheckbox3" value="option3"> 3
+            </label>
+            <label class="checkbox-inline">
+              <input type="checkbox" id="inlineCheckbox1" value="option1"> 1
+            </label>
+            <label class="checkbox-inline">
+              <input type="checkbox" id="inlineCheckbox2" value="option2"> 2
+            </label>
+            <label class="checkbox-inline">
+              <input type="checkbox" id="inlineCheckbox3" value="option3"> 3
+            </label>
+          </form>
+        </div>
+        <div class="col-lg-2">
+          <span>空代表访问没有访问限制</span>
+        </div>
+        <div class="view-btn-group art-btn-group">
+          <btn class="" type="primary" @click="">保存</btn>
+          <a href="/login" class="btn btn-default">返回</a>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</template>
+
+<script>
+  import { mapGetters } from 'vuex'
+
+  export default {
+    name: 'power',
+    data () {
+      return {
+        currentPage: 1,
+        totalPage: 99,
+        addModal: false,
+        addForm: {
+          name: '',
+          describe: ''
+        }
+      }
+    },
+    computed: {
+      ...mapGetters({
+        menuList: 'menuList'
+      })
+    },
+    mounted () {
+      // 客户端请求axios
+      console.log('客户端获取菜单列表结果~~', this.menuList)
+    },
+    asyncData ({store}) {
+      store.dispatch('isMenuList')
+    },
+    methods: {
+      addModalClose () {
+        let vm = this
+        vm.addForm.name = ''
+        vm.addForm.describe = ''
+      }
+    }
+  }
+</script>
+
+<style lang="less">
+  @border: #ddd;
+  .main {
+    padding: 20px;
+  }
+  .view-main {
+    overflow: hidden;
+    border:1px solid @border;
+    padding: 15px;
+    .view-btn-group {
+      clear: both;
+    }
+  }
+</style>

@@ -1,0 +1,9 @@
+/** 全球样式 **/
+
+* {
+  box-sizing: border-box;
+}
+
+.fr {
+  float: right !important;
+}

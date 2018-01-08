@@ -1,0 +1,62 @@
+<template>
+  <div class="view">
+    <menuSub :menu="menu"></menuSub>
+    <router-view class="wrap"></router-view>
+  </div>
+</template>
+
+<script>
+  import { mapGetters } from 'vuex'
+  import menuSub from '../../components/menu/Menusub.vue'
+
+  export default {
+    name: 'Home',
+    title () {
+      return '首页'
+    },
+    data() {
+      return {
+        menu: [
+          {
+            text: '首页',
+            url: '/home/index',
+            click: ($this) => {
+            }
+          },
+          {
+            text: '任务',
+            url: '/home/myTask',
+            click: ($this) => {
+            }
+          },
+          {
+            text: '项目',
+            url: '/home/myProject',
+            click: ($this) => {
+            }
+          },
+          {
+            text: '动态',
+            url: '/home/myLog',
+            click: ($this) => {
+            }
+          }
+        ]
+      }
+    },
+    created() {},
+    computed: {
+      ...mapGetters({
+        userStatus: 'getUserStatus'
+      })
+    },
+    mounted() {
+      if (this.$route.path === '/') {
+        this.$router.push('/home/index')
+      }
+    },
+    components: {menuSub},
+    asyncData({ store }) {},
+    methods: {}
+  }
+</script>

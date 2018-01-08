@@ -1,0 +1,33 @@
+<template>
+  <div>
+    <p>User - {{title}}</p>
+    <avator></avator>
+    <div>
+      <p>{{user.name}} - {{user.resign}}</p>
+    </div>
+    <pre>{{JSON.stringify(user, null, 2)}}</pre>
+  </div>
+</template>
+
+<script>
+import { mapGetters } from 'vuex'
+import Avator from 'components/avator/Avator'
+export default {
+  name: 'User',
+  data () {
+    return { }
+  },
+  computed: {
+    ...mapGetters({
+      user: 'getUser1',
+      title: 'getCitys'
+    })
+  },
+  components: {
+    Avator
+  },
+  asyncData ({ store }) {
+    return store.dispatch('getUser', { loginName: 'jiel', passwd: '123456' })
+  }
+}
+</script>

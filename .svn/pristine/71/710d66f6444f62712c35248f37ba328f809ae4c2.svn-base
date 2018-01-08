@@ -1,0 +1,25 @@
+<template>
+  <div class="panel panel-default">
+    <div class="panel-heading"><span class="glyphicon glyphicon-list-alt"></span>部门结构</div>
+    <div class="panel-body">
+      <div class="panel-item">
+        <a href="javascript:void(0);">技术部</a>
+      </div>
+      <div class="panel-item">
+        <a href="javascript:void(0);">人事部</a>
+      </div>
+      <div class="panel-item">
+        <a href="javascript:void(0);">财务部</a>
+      </div>
+      <div class="panel-item pull-right">
+        <a href="#">维护部门结构</a>
+      </div>
+    </div>
+  </div>
+</template>
+
+<style>
+.panel-item {
+  padding:5px 0;
+}
+</style>

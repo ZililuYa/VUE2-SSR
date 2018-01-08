@@ -1,0 +1,8 @@
+<template>
+  <div>
+  	<p>Home</p>
+  	<p>
+  		去<router-link to="/login" exact>登录</router-link>
+  	</p>
+  </div>
+</template>

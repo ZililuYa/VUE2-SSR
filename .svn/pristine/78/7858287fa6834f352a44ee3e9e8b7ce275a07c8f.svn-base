@@ -1,0 +1,53 @@
+import api from 'src/api'
+
+const state = {
+  data: [],
+  total: 0,
+  current: 1
+}
+
+const getters = {
+  projectState: state => state
+}
+
+const mutations = {
+  SET_DATA: (state, data) => {
+    console.log('项目列表的结果', data)
+    // var d2 = JSON.stringify(data)
+    // state.data = JSON.parse(d2)
+    state.data = data.data
+    state.total = Math.ceil(data.total / 20)
+    state.current = data.current
+  }
+}
+
+const actions = {
+  isProjectState ({state, commit}, param) {
+    let data = {
+      current: 1,
+      total: 20,
+      data: [{
+        name: '小米'
+      }, {
+        name: '苹果'
+      }, {
+        name: '华为'
+      }]
+    }
+    commit('SET_DATA', data)
+    let parameter = param || {}
+    api.post('/v1/project/pager', parameter).then((res) => {
+      commit('SET_DATA', res)
+      // commit('SET_DATA', data)
+    }).catch((error) => {
+      console.log(error)
+    })
+  }
+}
+
+export default {
+  state,
+  getters,
+  mutations,
+  actions
+}

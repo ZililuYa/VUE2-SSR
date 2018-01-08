@@ -1,0 +1,74 @@
+import Vue from 'vue'
+import VueRouter from 'vue-router'
+
+import Home from '../views/Home.vue'
+// import User from '../views/User.vue'
+// import About from '../views/About.vue'
+// import Citys from '../views/Citys.vue'
+// import Counter from '../views/Counter.vue'
+import Login from '../views/Login.vue'
+import Project from '../views/project/index.vue'
+import ProjectIndex from '../views/project/components/index.vue'
+import ProjectSurvey from '../views/project/components/survey.vue'
+import ProjectTeam from '../views/project/components/team.vue'
+import ProjectTask from '../views/project/components/task.vue'
+import Organization from '../views/organization/index.vue'
+import OrganizationIndex from '../views/organization/components/index.vue'
+
+Vue.use(VueRouter)
+
+const children = [
+  {path: '/', component: Home},
+  // {path: '/User', component: User},
+  // {path: '/About', component: About},
+  // {path: '/Citys', component: Citys},
+  // {path: '/Counter', component: Counter},
+  {
+    path: '/organization',
+    component: Organization,
+    children: [
+      {
+        path: '/organization/index',
+        component: OrganizationIndex
+      }
+    ]
+  },
+  {
+    path: '/project',
+    component: Project,
+    children: [
+      {
+        path: '/project/index',
+        component: ProjectIndex
+      },
+      {
+        path: '/project/survey/:id',
+        component: ProjectSurvey
+      },
+      {
+        path: '/project/team/:id',
+        component: ProjectTeam
+      },
+      {
+        path: '/project/task/:id',
+        component: ProjectTask
+      }
+    ]
+  }
+]
+
+const router = new VueRouter({
+  mode: 'history',
+  linkActiveClass: 'active',
+  base: __dirname,
+  routes: [{
+    path: '/',
+    component: require('src/Layout.vue'),
+    children
+  }, {
+    path: '/login',
+    component: Login
+  }]
+})
+
+export default router

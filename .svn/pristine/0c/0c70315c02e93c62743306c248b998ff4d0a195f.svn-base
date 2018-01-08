@@ -1,0 +1,18 @@
+const isProd = process.env.NODE_ENV === 'production'
+
+const proUrl = 'http://mcpapi.aldbim.com/api' // 生产环境api地址
+const devUrl = 'http://mcpapi.aldbim.com/api' // 开发api地址
+// const devUrl = 'http://192.168.31.141:8080/api'
+
+const FaceUrl = isProd ? proUrl : devUrl
+
+export default {
+  client: {
+    baseurl: '/api',
+    timeout: 10000
+  },
+  server: {
+    baseurl: FaceUrl,
+    timeout: 10000
+  }
+}

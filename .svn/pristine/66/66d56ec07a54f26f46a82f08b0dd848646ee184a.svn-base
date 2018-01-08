@@ -1,0 +1,25 @@
+export function demo(firs, last) {
+  return firs * last
+}
+
+export function setTitle(to, from) {
+  switch (to.path) {
+    case '/':
+      document.title = '首页'
+      break
+    case '/user':
+      document.title = '用户'
+      break
+    case '/citys':
+      document.title = '地区'
+      break
+    case '/about':
+      document.title = '我的'
+      break
+    case '/login':
+      document.title = '登录'
+      break
+    default:
+      document.title = 'vue-ssr'
+  }
+}

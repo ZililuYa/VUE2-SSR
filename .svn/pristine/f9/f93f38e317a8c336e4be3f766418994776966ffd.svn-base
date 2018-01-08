@@ -1,0 +1,84 @@
+<template>
+  <div class="view">
+    <menuSub :menu="menu" :menuRight="menuRight"></menuSub>
+    <router-view class="wrap"></router-view>
+  </div>
+</template>
+
+<script>
+  import { mapGetters } from 'vuex'
+  import menuSub from 'components/menu/Menusub.vue'
+
+  export default {
+    name: 'ProjectIndex',
+    data () {
+      return {
+        currentPage: 1,
+        totalPage: 99,
+        menuRight: [
+          {
+            icon: 'th-large',
+            text: '所有项目',
+            url: '/project/index',
+            click: ($this) => {
+            }
+          },
+          {
+            icon: 'plus',
+            text: '添加项目',
+            url: '/project/add',
+            click: ($this) => {
+            }
+          }
+        ],
+        menu: []
+      }
+    },
+    computed: {
+      ...mapGetters({
+        data: 'projectState'
+      })
+    },
+    mounted () {
+      if (this.$route.path === '/project') {
+        this.$router.push('/project/index')
+      }
+      let id = window.sessionStorage.getItem('pid')
+      let name = window.sessionStorage.getItem('pname')
+      if (!id) return
+      this.menu = [
+        {
+//          icon: 'caret-down',
+          text: name
+//          align: 'right',
+//          url: '/project/survey/' + id
+        },
+        {
+          text: '任务',
+          url: '/project/task/' + id
+        },
+//        {
+//          text: '团队',
+//          url: '/project/team/' + id
+//        },
+        {
+          text: '概况',
+          url: '/project/survey/' + id
+        }
+      ]
+    },
+    components: {menuSub},
+    asyncData ({store}) {
+    }
+  }
+</script>
+
+<style>
+  .wrap {
+    padding: 0 !important;
+  }
+
+  .view {
+    overflow: hidden;
+  }
+</style>

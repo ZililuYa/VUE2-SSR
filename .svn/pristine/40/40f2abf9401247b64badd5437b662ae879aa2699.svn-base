@@ -1,0 +1,84 @@
+<template>
+  <nav id="nav" class="nav">
+    <ul class="fl">
+      <li v-for="i in menu" :class="$route.path === i.url ? 'active' : ''">
+        <a href="javascript:;" @click="push(i.url, i.click)">
+          <i v-if="i.align !== 'right' && i.icon" :class="'fa fa-'+i.icon"></i>
+          {{i.text}}
+          <i v-if="i.align === 'right' && i.icon" :class="'fa fa-'+i.icon"></i>
+        </a>
+      </li>
+    </ul>
+    <div class="fr">
+      <ul>
+        <li v-for="i in menuRight">
+          <b>
+            <a href="javascript:;" @click="push(i.url, i.click)">
+              <i v-if="i.align !== 'right' && i.icon" :class="'fa fa-'+i.icon"></i>
+              {{i.text}}
+              <i v-if="i.align === 'right' && i.icon" :class="'fa fa-'+i.icon"></i>
+            </a>
+          </b>
+        </li>
+      </ul>
+    </div>
+  </nav>
+</template>
+
+<script>
+  export default {
+    data () {
+      return {}
+    },
+    props: {
+      menu: {
+        type: Array
+      },
+      menuRight: {
+        type: Array
+      }
+    },
+    methods: {
+      push (url, click) {
+        if (click) click(this)
+        if (url) this.$router.push(url)
+      }
+    }
+  }
+</script>
+
+<style lang="less">
+  .nav {
+    background-color: #e5e5e5;
+    margin: 0 -20px;
+    padding: 0 20px;
+    font-size: 14px;
+    position: relative;
+    height: 40px;
+    padding-left: 0;
+    ul {
+      padding-left: 20px;
+    }
+  }
+
+  .nav li {
+    line-height: 30px;
+    padding: 5px 0 1px;
+    display: block;
+    float: left;
+    color: #808080;
+    &.active {
+      font-weight: bold;
+    }
+  }
+
+  .nav a {
+    display: block;
+    padding: 0 7px;
+    color: #1e232f;
+    text-decoration: none;
+    &:hover {
+      background-color: #d1d1d1
+    }
+  }
+</style>

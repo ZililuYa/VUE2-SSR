@@ -1,0 +1,102 @@
+<template>
+  <div>
+    <div class="featurebar">
+      <ul class="ul">
+        <li><a href="javascript:;" @click="search=!search"><i class="fa fa-search"></i> 搜索</a></li>
+        <li class="fr">
+          <a href="javascript:;" @click="add"><i class="fa fa-plus"></i> 创建类型</a>
+        </li>
+      </ul>
+    </div>
+    <div class="search-main" v-show="search">
+      <form class="form-inline" action="javascript:;" @submit="submitEvent">
+        <div class="form-group input-group-sm">
+          <input type="text" class="form-control" v-model="param.name" placeholder="请输入类型名称">
+        </div>
+        <button type="button" class="btn btn-primary btn-sm" @click="isSystemTaskTypeList(param)">搜索</button>
+
+        <div class="fr">
+          <a href="javascript:;" class="close" @click="search=!search"><i class="fa fa-close"></i></a>
+        </div>
+      </form>
+    </div>
+    <div class="main">
+      <dataTable ref="table" :tool="tool" :data="state.data" :page="state.page" @pageChange="tableChange" :columns="columns"></dataTable>
+    </div>
+  </div>
+</template>
+
+<script>
+  import { mapGetters, mapActions } from 'vuex'
+  import dataTable from 'components/table/table.vue'
+
+  export default {
+    name: 'Project',
+    data () {
+      return {
+        search: false,
+        tool: [{
+          text: '删除',
+          click: function (data) {
+            console.log('要批量删除的数据', data)
+          }
+        }],
+        columns: [{
+          type: 'selection'
+        }, {
+          text: '任务类型名称',
+          key: 'name'
+        }, {
+          text: '操作',
+          width: 100
+//          render: function (h, row) {
+//            return h('a', {
+//              attrs: {
+//                href: 'javascript:;'
+//              },
+//              on: {
+//                click: () => {
+//                }
+//              }
+//            }, row.name)
+//          }
+        }],
+        param: {
+          pageSize: 20,
+          pageIndex: 1,
+          name: ''
+        }
+      }
+    },
+    computed: {
+      ...mapGetters({
+        state: 'systemTaskTypeList'
+      })
+    },
+    mounted () {
+      console.log('服务端接收到的数据：', this.state)
+    },
+    components: {dataTable},
+    asyncData ({store}) {
+      return store.dispatch('isSystemTaskTypeList')
+    },
+    methods: {
+      ...mapActions([
+        'isSystemTaskTypeList'
+      ]),
+      submitEvent () {
+        this.tableChange()
+        return false
+      },
+      add () {
+      },
+      tableChange: function (data) {
+        if (data) this.param.pageIndex = data
+        this.$refs.table.loading = true
+        this.isSystemTaskTypeList(this.param)
+//        this.loading = false
+      }
+    }
+  }
+</script>
+

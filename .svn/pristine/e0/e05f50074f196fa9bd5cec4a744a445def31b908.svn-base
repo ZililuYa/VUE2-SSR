@@ -1,0 +1,89 @@
+<template>
+  <div class="">
+    <div class="featurebar">
+      <ul class="ul">
+        <li>
+          <b>团队成员</b>
+        </li>
+        <li class="fr">
+          <router-link to="/project/index"><i class="fa fa-reply"></i></router-link>
+        </li>
+      </ul>
+    </div>
+    <div class="main">
+      <table class="table table-bordered table-striped table-hover table-condensed">
+        <thead>
+        <tr>
+          <th>用户</th>
+          <th>角色</th>
+          <th>加盟日</th>
+          <th>可用工日</th>
+          <th>可用工时/天</th>
+          <th>总计</th>
+          <th>操作</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr v-for="i in [1,2,3,4]">
+          <td>{{i}}</td>
+          <td>鲁康</td>
+          <td>2017-12-6</td>
+          <td></td>
+          <td></td>
+          <td>100</td>
+          <td></td>
+        </tr>
+        <tr>
+          <td colspan="7">
+            总计：1176
+          </td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</template>
+
+<script>
+  export default {
+    data () {
+      return {}
+    }
+  }
+</script>
+
+<style lang="less">
+  .row-table {
+    display: table;
+    width: 100%;
+  }
+
+  .col-side, .col-main {
+    display: table-cell;
+  }
+
+  .col-side {
+    width: 350px;
+    padding-left: 10px;
+  }
+
+  .col-main {
+    padding-right: 10px;
+  }
+
+  .fieldset {
+    margin-bottom: 15px;
+    border: 1px solid #e5e5e5;
+    padding: 10px 15px 15px;
+    legend {
+      width: auto;
+      margin: 0 0 0 -5px;
+      font-size: 13px;
+      font-weight: bold;
+      border-bottom: 0;
+      padding: 0 5px;
+    }
+    .content {
+    }
+  }
+</style>

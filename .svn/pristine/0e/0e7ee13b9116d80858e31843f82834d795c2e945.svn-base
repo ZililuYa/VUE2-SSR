@@ -1,0 +1,322 @@
+<template>
+  <div class="">
+    <div class="featurebar">
+      <ul class="ul">
+        <li>
+          <b>团队成员</b>
+        </li>
+        <li class="li-search">
+          <form class="form-inline">
+            <div class="form-group input-group-sm">
+              <select class="form-control" v-model="departData" @change="doDepartment()">
+                <option>/</option>
+                <option v-for="item in departmentList" :value="item">{{item.name}}</option>
+              </select>
+            </div>
+            <!-- <div class="fr">
+              <a href="javascript:;" class="close" @click="search=!search"><i class="fa fa-close"></i></a>
+            </div> -->
+          </form>
+        </li>
+        <li class="fr">
+          <router-link to="/project/index"><i class="fa fa-reply"></i></router-link>
+        </li>
+        <li class="pull-right">
+          <a href="javascript:void(0)" @click="addModal=true"><i class="fa fa-cog"></i> 添加团队成员</a>
+        </li>
+        <li class="pull-right">
+          <a href="javascript:void(0)" @click="inviteModal=true"><i class="fa fa-plus"></i> 邀请用户</a>
+        </li>
+      </ul>
+    </div>
+    <div class="main">
+      <dataTable :tool="tool" :data="state.data" :page="state.page" @pageChange="tableChange" :columns="columns"></dataTable>
+    </div>
+    <modal v-model="addModal" title="添加团队成员" @hide="modalClose" ref="modal" id="add_modal" :footer="false" >
+      <formData ref="form" class="">
+        <div class="form-group">
+          <label for="name" class="col-sm-3 control-label">部门</label>
+          <div class="col-sm-9">
+            <select class="form-control" v-model="depart" @change="getMem()">
+              <option>/</option>
+              <option v-for="item in departmentList" :value="item">{{item.name}}</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="name" class="col-sm-3 control-label">用户</label>
+          <div class="col-sm-9">
+            <select class="form-control" v-model="addForm.data" @change="doSelect()">
+              <option>/</option>
+              <option v-for="item in memberList.data" :value="item">{{item.name}}</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="name" class="col-sm-3 control-label">角色</label>
+          <div class="col-sm-9">
+            <input type="text" class="form-control" v-model="addForm.roleName" name="" value="" disabled>
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="name" class="col-sm-3 control-label">可用工日</label>
+          <div class="col-sm-9">
+            <input type="text" class="form-control" v-model="addForm.hasTime" validate="number">
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="name" class="col-sm-3 control-label">可用工时/天</label>
+          <div class="col-sm-9">
+            <input type="text" class="form-control" v-model="addForm.hasTime" validate="number">
+          </div>
+        </div>
+        <div class="form-group btn-groups">
+          <btn class="" type="primary" @click="submit">保存</btn>
+        </div>
+      </formData>
+    </modal>
+    <modal v-model="inviteModal" title="邀请用户" @hide="" ref="modal" id="invite-modal" :footer="false">
+      <invite @art-code="doCodeModal" @close-model="closeInvite()"></invite>
+    </modal>
+    <modal v-model="codeModal" title="二维码邀请" @hide="" ref="modals" :footer="false">
+      <div class="code-img">
+        <img :src="getQrCode.data">
+      </div>
+    </modal>
+  </div>
+</template>
+
+<script>
+  import { mapGetters, mapActions } from 'vuex'
+  import dataTable from '../../../components/table/table.vue'
+  import formData from '../../../components/form/form.vue'
+  import invite from './invite.vue'
+  import api from 'src/api'
+
+  export default {
+    components: {dataTable, formData, invite},
+    data () {
+      return {
+        search: false,
+        inviteModal: false,
+        addModal: false,
+        codeModal: false,
+        departData: {},
+        depart: {},
+        addForm: {
+          data: {},
+          departName: '/',
+          id: '',
+          projectId: parseInt(this.$route.params.id),
+          roleName: '',
+          hasTime: ''
+        },
+        tool: [{
+          text: '删除',
+          click: function (data) {
+            console.log('要批量删除的数据', data)
+          }
+        }],
+        columns: [{
+          type: 'selection'
+        }, {
+          text: '团队成员',
+          key: 'memberName'
+        }, {
+          text: '角色',
+          key: 'roleName'
+        }, {
+          text: '加盟日',
+          key: 'createTime',
+          render: function (h, row) {
+            return h('span', {}, new Date(row.createTime).Format('yyyy-MM-dd'))
+          }
+        }, {
+          text: '可用工日',
+          key: 'hasTime',
+          render: function (h, row) {
+            return h('span', {}, new Date(row.hasTime).Format('yyyy-MM-dd'))
+          }
+        }, {
+          text: '可用工时/天',
+          key: 'hasTime',
+          render: function (h, row) {
+            return h('span', {}, new Date(row.hasTime).Format('yyyy-MM-dd'))
+          }
+        }, {
+          text: '总计',
+          key: 'hasTime',
+          render: function (h, row) {
+            return h('span', {}, new Date(row.hasTime).Format('yyyy-MM-dd'))
+          }
+        }, {
+          text: '操作',
+          width: 30,
+          align: 'center',
+          render: (h, row) => {
+            return h('btn', {
+              attrs: {
+                size: 'xs',
+                type: 'danger'
+              },
+              on: {
+                click: () => {
+                  this.del(row.id)
+                }
+              }
+            }, '删除')
+          }
+        }],
+        param: {
+          pageSize: 20,
+          pageIndex: 1,
+          projectId: parseInt(this.$route.params.id)
+        }
+      }
+    },
+    computed: {
+      ...mapGetters({
+        state: 'projectTeamList',
+        departmentList: 'departmentList',
+        memberList: 'getMember',
+        getQrCode: 'getQrCode'   // 二维码
+      })
+    },
+    mounted () {
+      console.log('服务端接收到的数据：', this.state)
+    },
+    asyncData ({store, route}) {
+      return Promise.all([store.dispatch('isProjectTeam', {projectId: parseInt(route.params.id)}), store.dispatch('doMember'), store.dispatch('isDepartment', {})])
+    },
+    methods: {
+      ...mapActions([
+        'isProjectTeam',
+        'doMember',
+        'doQrCode'
+      ]),
+      tableChange (data) {
+        this.param.pageIndex = data
+        this.isProjectTeam(this.param)
+      },
+      del (id) {
+        console.log(id)
+        this.$confirm({
+          title: '提示',
+          okText: '确定',
+          cancelText: '取消',
+          content: '确定要删除吗？'
+        }).then(() => {
+          api.post('/v1/team/delete', {id}).then((response) => {
+            if (response.code === 200) {
+              this.isProjectTeam(this.param)
+            } else {
+              this.$notify(response.message)
+            }
+          })
+        }).catch(() => {
+        })
+      },
+      doDepartment () {
+        /**
+         * 根据部门获取团队成员
+         */
+        let vm = this
+        let param = {
+          projectId: vm.$route.params.id,
+          departmentId: vm.departData.id
+        }
+        vm.isProjectTeam(param)
+      },
+      getMem () {
+        /**
+         * 根据部门获取用户
+         */
+        let vm = this
+        vm.addForm.roleName = ''
+        let param = {
+          departmentId: vm.depart.id
+        }
+        vm.doMember(param)
+        vm.addForm.departName = vm.departData.name
+      },
+      submit () {
+        /**
+         * 验证
+         */
+        console.log(this.addForm)
+        let fo = this.$refs.form.validate()
+        if (!fo) {
+          console.log('验证未通过')
+          return false
+        } else {
+          this.doSubmit()
+        }
+      },
+      doSubmit () {
+        /**
+         * 编辑提交
+         */
+        console.log('添加成员')
+        let vm = this
+        let param = {
+          memberIds: vm.addForm.memberIds,
+          projectId: vm.addForm.projectId
+        }
+        api.post('/v1/team/insert', param).then((response) => {
+          if (response.code === 200) {
+            vm.addModal = false
+            vm.isProjectTeam({projectId: parseInt(vm.$route.params.id)})
+            vm.cleanForm()
+            this.$notify('success', '发送成功')
+          } else {
+            this.$notify('danger', response.message)
+          }
+        })
+      },
+      doSelect () {
+        /**
+         * 选择用户
+         */
+        console.log(this.addForm.data)
+        let vm = this
+        vm.addForm.memberIds = vm.addForm.data.id + ','
+        vm.addForm.roleName = vm.addForm.data.roleName
+        vm.addForm.hasTime = vm.addForm.data.hasTime
+      },
+      closeInvite () {
+        /**
+         * 关闭邀请弹框
+         */
+        let vm = this
+        vm.inviteModal = false
+        vm.isProjectTeam({projectId: parseInt(vm.$route.params.id)})
+      },
+
+      cleanForm () {
+        /**
+         * 清空数据
+         */
+        this.addForm.data = {}
+      },
+      modalClose () {
+        //
+      },
+      doCodeModal () {
+        /**
+         * 生成二维码
+         */
+        let vm = this
+        vm.doQrCode({projectId: parseInt(vm.$route.params.id), content: '/acceptInvite'})
+        vm.codeModal = true
+      }
+    }
+  }
+</script>
+<style lang="less">
+  .li-search {
+    padding-left:15px;
+  }
+  .code-img {
+    text-align: center;
+  }
+</style>

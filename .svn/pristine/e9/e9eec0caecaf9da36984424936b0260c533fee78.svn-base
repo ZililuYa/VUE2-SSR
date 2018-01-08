@@ -1,0 +1,75 @@
+<template>
+  <div>
+    <div class="featurebar">
+      <ul class="ul">
+        <li class="active"><a href="">今天</a></li>
+        <li><a href="">昨天</a></li>
+        <li><a href="">前天</a></li>
+        <li><a href="">本周</a></li>
+        <li><a href="">上周</a></li>
+        <li><a href="">本月</a></li>
+        <li><a href="">上月</a></li>
+        <li><a href="">所有</a></li>
+      </ul>
+    </div>
+    <div class="main">
+      <dataTable :tool="tool" :data="datas" :currentPage="currentPage" @pageChange="tableChange" @change="tableChange" :totalPage="20" :columns="columns"></dataTable>
+    </div>
+  </div>
+</template>
+
+<script>
+  import { mapGetters } from 'vuex'
+  import dataTable from '../../../components/table/table.vue'
+
+  export default {
+    name: 'log',
+    data () {
+      return {
+        currentPage: 1,
+        tool: [],
+        datas: [
+          {
+            name: '111'
+          }
+        ],
+        columns: [{
+          text: '日期',
+          key: 'date',
+          align: 'center',
+          width: 150
+        }, {
+          text: '操作者',
+          key: 'name'
+        }, {
+          text: '动作'
+        }, {
+          text: '对象类型'
+        }, {
+          text: 'ID',
+          width: 100
+        }, {
+          text: '对象名称'
+        }]
+      }
+    },
+    computed: {
+      ...mapGetters({
+        logList: 'logList'
+      })
+    },
+    components: {dataTable},
+    asyncData ({store}) {
+      store.dispatch('isLog')
+    },
+    methods: {
+      tableChange: function (data) {
+        console.log(data)
+      }
+    }
+  }
+</script>
+
+<style lang="less">
+
+</style>

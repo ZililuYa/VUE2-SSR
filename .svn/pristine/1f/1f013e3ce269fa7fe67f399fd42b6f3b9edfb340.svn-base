@@ -1,0 +1,36 @@
+<template>
+  <div class="view">
+    <menuSub></menuSub>
+    <router-view class="wrap"></router-view>
+  </div>
+</template>
+
+<script>
+  import { mapGetters } from 'vuex'
+  import menuSub from './components/menusub.vue'
+
+  export default {
+    name: 'ProjectIndex',
+    data () {
+      return {
+        currentPage: 1,
+        totalPage: 99
+      }
+    },
+    computed: {
+      ...mapGetters({
+        data: 'projectState'
+      })
+    },
+    components: {menuSub},
+    asyncData ({store}) {
+      store.dispatch('isProjectState')
+    }
+  }
+</script>
+
+<style>
+  .wrap {
+    padding: 0 !important;
+  }
+</style>

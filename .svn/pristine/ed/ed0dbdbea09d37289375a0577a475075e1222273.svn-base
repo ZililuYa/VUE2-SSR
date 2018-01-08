@@ -1,0 +1,122 @@
+<template>
+  <table ref="table" class="table table-bordered table-striped table-hover table-condensed">
+    <thead>
+    <tr>
+      <th v-for="i in columns" :width="i.type === 'selection' ? '25' : i.width" :style="`vertical-align: ${i.vertical?i.vertical:'middle'}; text-align: ${i.align?i.align:'left'};`">
+        <template v-if="!i.type">{{i.text}}</template>
+        <template v-if="i.type === 'selection'"><input type="checkbox" ref="call" @change="checkboxAll"/></template>
+      </th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr v-for="(d, x) in data">
+      <td v-for="i in columns" :style="`vertical-align: ${i.vertical?i.vertical:'middle'}; text-align: ${i.align?i.align:'left'};`">
+        <template v-if="i.type === 'indexes'">{{x + 1}}</template>
+        <template v-if="i.type === 'selection'"><input ref="call" type="checkbox" @change="checkboxOne(x)"/></template>
+        <template v-if="!i.type && !i.render">{{d[i.key] || ''}}</template>
+        <Expand v-if="i.render" :render="i.render" :row="d"></Expand>
+      </td>
+    </tr>
+    <tr v-show="totalPage">
+      <td colspan="99">
+        <pagination @change="pageChange" size="sm" v-model="current" :total-page="totalPage" align="right"/>
+        <div class="fr totalPage">共{{totalPage}}条记录，每页{{sizePage}}条</div>
+        <div class="fl" v-if="tool.length">
+          <dropdown dropup>
+            <btn class="dropdown-toggle btn-sm">操作 <span class="caret"></span></btn>
+            <template slot="dropdown">
+              <li v-for="i in tool" :class="i==='divider'?i:''">
+                <a v-if="i!=='divider'" role="button" @click="i.click(checkboxData)">{{i.text}}</a>
+              </li>
+            </template>
+          </dropdown>
+        </div>
+      </td>
+    </tr>
+    </tbody>
+  </table>
+</template>
+
+<script>
+  import Expand from './render.js'
+
+  export default {
+    data () {
+      return {
+        checkboxData: [],
+        current: 1
+      }
+    },
+    components: {Expand},
+    mounted () {
+      if (this.currentPage && this.currentPage > 0) this.current = this.currentPage
+    },
+    props: {
+      tool: {
+        type: Array,
+        default () {
+          return []
+        }
+      },
+      data: {
+        type: Array,
+        default () {
+          return []
+        }
+      },
+      columns: {
+        type: Array,
+        default () {
+          return []
+        }
+      },
+      totalPage: Number,
+      currentPage: Number,
+      sizePage: Number
+    },
+    methods: {
+      selectAll (checked) {
+        for (let i in this.$refs.call) {
+          this.$refs.call[i].checked = checked
+          if (checked) {
+            this.checkboxData = this.data
+          } else {
+            this.checkboxData = []
+          }
+        }
+        this.$emit('change', this.checkboxData)
+      },
+      trClick (t) {
+        this.checkboxOne(t, 'tr')
+      },
+      pageChange (p) {
+        this.$emit('pageChange', p)
+      },
+      checkboxAll () {
+        let checked = this.$refs.call[0].checked
+        this.selectAll(checked)
+      },
+      checkboxOne (t, tr) {
+        if (this.$refs.call[t + 1].checked === false) {
+          this.$refs.call[0].checked = false
+          this.checkboxData[t] = null
+          this.$emit('change', this.checkboxData)
+        } else {
+          let all = 1
+          for (let i in this.$refs.call) {
+            t = parseInt(i) - 1
+            if (parseInt(i) !== 0 && this.$refs.call[i].checked === false) {
+              this.$refs.call[0].checked = false
+              this.checkboxData[t] = null
+              all = 0
+            } else if (parseInt(i) !== 0) {
+              this.checkboxData[t] = this.data[t]
+            }
+          }
+          if (all) this.$refs.call[0].checked = true
+          this.$emit('change', this.checkboxData)
+        }
+      }
+    }
+  }
+</script>

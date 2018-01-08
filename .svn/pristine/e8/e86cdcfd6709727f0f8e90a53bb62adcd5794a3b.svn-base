@@ -1,0 +1,85 @@
+<template>
+  <div>
+    <div class="main">
+      <dataTable :data="projectList" :currentPage="currentPage" @pageChange="tableChange" @change="tableChange" :totalPage="20" :columns="columns"></dataTable>
+    </div>
+  </div>
+</template>
+
+<script>
+  import { mapGetters } from 'vuex'
+  import dataTable from '../../../components/table/table.vue'
+
+  export default {
+    name: 'myProject',
+    title () {
+      return '项目'
+    },
+    data () {
+      return {
+        currentPage: 1,
+        columns: [{
+          text: 'ID',
+          key: 'id',
+          width: '100px'
+        }, {
+          text: '项目代号'
+        }, {
+          text: '项目名称'
+        }, {
+          text: '开始日期',
+          key: 'createTime',
+          align: 'center',
+          width: 150,
+          render: (h, params) => {
+            let date = new Date(params.createTime)
+            let y = 1900 + date.getYear()
+            let m = '0' + (date.getMonth() + 1)
+            let d = '0' + date.getDate()
+            let dates = y + '-' + m.substring(m.length - 2, m.length) + '-' + d.substring(d.length - 2, d.length)
+            return dates
+          }
+        }, {
+          text: '结束日期',
+          key: 'createTime',
+          align: 'center',
+          width: 150,
+          render: (h, params) => {
+            let date = new Date(params.createTime)
+            let y = 1900 + date.getYear()
+            let m = '0' + (date.getMonth() + 1)
+            let d = '0' + date.getDate()
+            let dates = y + '-' + m.substring(m.length - 2, m.length) + '-' + d.substring(d.length - 2, d.length)
+            return dates
+          }
+        }, {
+          text: '状态'
+        }, {
+          text: '角色'
+        }, {
+          text: '加盟日'
+        }, {
+          text: '可用工时/天'
+        }]
+      }
+    },
+    computed: {
+      ...mapGetters({
+        logList: 'logList'
+      })
+    },
+    components: {dataTable},
+    asyncData ({store}) {
+      return store.dispatch('isLog')
+    },
+    methods: {
+      tableChange: function (data) {
+        console.log(data)
+      }
+    }
+  }
+</script>
+
+<style lang="less">
+
+</style>

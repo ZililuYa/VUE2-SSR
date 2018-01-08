@@ -1,0 +1,78 @@
+<template>
+	<div class="headerTop">
+		<div id="topbar" class="topbar pull-left">
+			<h5>壹仟零壹艺网络科技（北京）有限公司项目管理系统</h5>
+		</div>
+		<div id="topnav" class="topnav pull-right">
+			<a href="">官方</a>
+			<a href="javascript:void(0);" @click="signOut">退出</a>
+			<a href="">内网</a>
+			<a href="">关于</a>
+		</div>
+	</div>
+</template>
+
+<script>
+import api from 'src/api'
+
+export default {
+  name: 'TopHeader',
+  data () {
+    return {}
+  },
+  created () { },
+  methods: {
+    signOut () {
+      let vm = this
+      this.$confirm({
+        title: '提示',
+        okText: '确定',
+        cancelText: '取消',
+        content: '确定要退出登录吗？'
+      }).then(() => {
+        vm.doSignout()
+      }).catch(() => {
+      })
+    },
+    doSignout () {
+      let vm = this
+      api.post('/signout', '').then((response) => {
+        if (response.code === 200) {
+          vm.$store.commit('USER_DATA', '')
+          this.$router.replace({ path: '/login' })
+        } else {
+          this.$notify({
+            type: 'danger',
+            content: response.message
+          })
+        }
+      }).catch((error) => {
+        console.log(error)
+      })
+    }
+  }
+}
+</script>
+
+<style lang="stylus">
+.headerTop:after
+	display: block;
+	content: '';
+	clear: both;
+.topbar h5
+	color: #fc0;
+	font-weight: normal;
+	margin: 0;
+.topnav
+	margin-top: -5px;
+	a
+		float: left;
+		display: block;
+		padding: 3px 6px;
+		position: relative;
+		color: #d1e4f2;
+		text-decoration: none;
+		&:hover {
+			background-color: #3b465e
+		}
+</style>

@@ -1,0 +1,294 @@
+[
+{
+  "type": 1,
+  "name": "我的地盘",
+  "path": "/home",
+  "url": "/home/index",
+  "child": [
+  {
+    "type": 2,
+    "name": "首页",
+    "url": "/home/index"
+  },
+  {
+    "type": 2,
+    "name": "任务",
+    "url": "/home/myTask"
+  },
+  {
+    "type": 2,
+    "name": "项目",
+    "url": "/home/myProject"
+  },
+  {
+    "type": 2,
+    "name": "动态",
+    "url": "/home/myLog"
+  }]
+},
+{
+  "type": 1,
+  "name": "项目",
+  "path": "/project",
+  "url": "/project/index",
+  "child": [
+  {
+    "type": 2,
+    "name": "项目名称",
+    "url": "/project/survey",
+    "child": [
+    {
+      "type": 3,
+      "permission": "sys.project.del",
+      "name": "删除"
+    },
+    {
+      "type": 3,
+      "permission": "sys.project.edit",
+      "name": "编辑"
+    },
+    {
+      "type": 3,
+      "permission": "sys.project.start",
+      "name": "开始"
+    },
+    {
+      "type": 3,
+      "permission": "sys.project.stop",
+      "name": "挂起"
+    },
+    {
+      "type": 3,
+      "permission": "sys.project.finish",
+      "name": "完成"
+    }]
+  },
+  {
+    "type": 2,
+    "name": "任务",
+    "url": "/project/task",
+    "child": [
+    {
+      "type": 3,
+      "permission": "sys.task.add",
+      "name": "建任务"
+    },
+    {
+      "type": 3,
+      "permission": "sys.task.send",
+      "name": "派指"
+    },
+    {
+      "type": 3,
+      "permission": "sys.task.start",
+      "name": "开始"
+    },
+    {
+      "type": 3,
+      "permission": "sys.task.time",
+      "name": "工时"
+    },
+    {
+      "type": 3,
+      "permission": "sys.task.done",
+      "name": "完成"
+    },
+    {
+      "type": 3,
+      "permission": "sys.task.clone",
+      "name": "关闭"
+    },
+    {
+      "type": 3,
+      "permission": "sys.task.edit",
+      "name": "编辑"
+    }]
+  },
+  {
+    "type": 2,
+    "name": "项目团队",
+    "url": "/project/team",
+    "child": [
+    {
+      "type": 3,
+      "permission": "sys.team.add",
+      "name": "添加成员"
+    },
+    {
+      "type": 3,
+      "permission": "sys.team.del",
+      "name": "删除成员"
+    }]
+  },
+  {
+    "type": 3,
+    "name": "所有项目",
+    "url": "/project/index",
+    "permission": "sys.project.all"
+  },
+  {
+    "type": 3,
+    "name": "添加项目",
+    "url": "/project/add",
+    "permission": "sys.project.add"
+  }]
+},
+{
+  "type": 1,
+  "name": "组织",
+  "path": "/organization",
+  "url": "/organization/index",
+  "child": [
+  {
+    "type": 2,
+    "name": "用户",
+    "url": "/organization/index",
+    "child": [
+    {
+      "type": 3,
+      "permission": "sys.user.add",
+      "name": "添加用户"
+    },
+    {
+      "type": 3,
+      "permission": "sys.user.edit",
+      "name": "编辑"
+    },
+    {
+      "type": 3,
+      "permission": "sys.user.del",
+      "name": "删除"
+    }]
+  },
+  {
+    "type": 2,
+    "name": "部门",
+    "url": "/organization/department",
+    "child": [
+    {
+      "type": 3,
+      "permission": "sys.dep.add",
+      "name": "新增部门"
+    },
+    {
+      "type": 3,
+      "permission": "sys.dep.edit",
+      "name": "编辑"
+    },
+    {
+      "type": 3,
+      "permission": "sys.dep.del",
+      "name": "删除"
+    }]
+  },
+  {
+    "type": 2,
+    "name": "职位",
+    "url": "/organization/position",
+    "child": [
+    {
+      "type": 3,
+      "permission": "sys.posi.add",
+      "name": "新增职位"
+    },
+    {
+      "type": 3,
+      "permission": "sys.posi.edit",
+      "name": "编辑"
+    },
+    {
+      "type": 3,
+      "permission": "sys.posi.del",
+      "name": "删除"
+    }]
+  },
+  {
+    "type": 2,
+    "name": "权限",
+    "url": "/organization/power",
+    "child": [
+    {
+      "type": 3,
+      "permission": "sys.power.add",
+      "name": "新增分组"
+    },
+    {
+      "type": 3,
+      "permission": "sys.power.views",
+      "name": "视图维护"
+    },
+    {
+      "type": 3,
+      "permission": "sys.power.power",
+      "name": "权限维护"
+    },
+    {
+      "type": 3,
+      "permission": "sys.power.members",
+      "name": "成员维护"
+    },
+    {
+      "type": 3,
+      "permission": "sys.power.edit",
+      "name": "编辑分组"
+    },
+    {
+      "type": 3,
+      "permission": "sys.power.copy",
+      "name": "复制分组"
+    },
+    {
+      "type": 3,
+      "permission": "sys.power.del",
+      "name": "删除分组"
+    }]
+  },
+  {
+    "type": 2,
+    "name": "公司",
+    "url": "/organization/company"
+  },
+  {
+    "type": 2,
+    "name": "动态",
+    "url": "/organization/log"
+  }]
+},
+{
+  "type": 1,
+  "name": "系统设置",
+  "path": "/system",
+  "url": "/system/send",
+  "child": [
+  {
+    "type": 2,
+    "name": "自定义",
+    "url": "/system/custom/index"
+  },
+  {
+    "type": 2,
+    "name": "发信",
+    "url": "/system/send"
+  },
+  {
+    "type": 2,
+    "name": "任务类型",
+    "url": "/system/taskType",
+    "child": [
+    {
+      "type": 3,
+      "permission": "sys.tasktype.add",
+      "name": "创建类型"
+    },
+    {
+      "type": 3,
+      "permission": "sys.tasktype.edit",
+      "name": "编辑"
+    },
+    {
+      "type": 3,
+      "permission": "sys.tasktype.del",
+      "name": "删除"
+    }]
+  }]
+}]
