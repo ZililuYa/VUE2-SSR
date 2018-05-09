@@ -1,9 +1,0 @@
-
-export function demo(firs, last) {
-  return firs * last
-}
-
-export function isHistory(pathname) {
-  const hsPathName = window.location.pathname
-  return hsPathName === pathname || hsPathName === pathname + '/'
-}
