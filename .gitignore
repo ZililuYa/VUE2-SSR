@@ -49,5 +49,6 @@ main.js
 main.js.map
 
 .idea
+.svn
 npm-debug.log.*
 yarn.lock
